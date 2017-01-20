@@ -10,10 +10,23 @@ import java.util.stream.Collectors;
  * Created by VAUst on 31.12.2016.
  */
 public class Dictionary {
-    private static Dictionary insrance;
+    private static volatile Dictionary instance;
     private List<Word> words;
     private List<Category> categories;
 
+    public static Dictionary getInstance() {
+    	Dictionary localInstance = instance;
+    	if (localInstance == null) {
+    		synchronized (Dictionary.class) {
+				localInstance = instance;
+				if (localInstance == null) {
+					instance = localInstance = new Dictionary();
+				}
+			}
+    	}
+    	return localInstance;
+    }
+    
     public void setDictionary(List<Word> words) {
     	this.words = words;
     }

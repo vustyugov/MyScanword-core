@@ -45,7 +45,6 @@ public class Block {
 
     public void setWordsList(WordsList wordsList) {
         this.wordsList = wordsList;
-
     }
 
     public WordsList getWordsList() {

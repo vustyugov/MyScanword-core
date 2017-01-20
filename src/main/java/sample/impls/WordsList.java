@@ -1,5 +1,7 @@
 package sample.impls;
 
+import sample.impls.cell.*;
+import sample.interfaces.Cell;
 import sample.interfaces.Scanword;
 
 import java.util.*;
@@ -11,7 +13,7 @@ public class WordsList {
 
     private Map<String, List<String>> words;
     private List<Scanword> scanwords;
-
+    
     public WordsList () {
         scanwords = new LinkedList<Scanword>();
         words = new HashMap<String, List<String>>();
@@ -19,6 +21,7 @@ public class WordsList {
 
     public WordsList (List<Scanword> list) {
         scanwords = list;
+        
     }
 
     public void setScanwords (List<Scanword> list) {
@@ -43,11 +46,34 @@ public class WordsList {
     }
 
     private List<String> getWordsByScanword (Scanword scanword) {
-        return null;
+    	List<String> list = new LinkedList<>(getHorizontalList(scanword));
+    	list.addAll(getVerticalList(scanword));
+        return list;
     }
 
     private List<String> getHorizontalList (Scanword scanword) {
-    	return null;
+    	List<String> list = new LinkedList<String> ();
+    	for(int indexR = 0; indexR < scanword.getRow(); indexR++) {
+    		for (int indexC = 0; indexC < scanword.getColumns(); indexC++) {
+    			Cell cell = scanword.getArrayElement(indexR, indexC);
+    			if (cell instanceof ActiveCell && ((ActiveCell)cell).getHDirection()) {
+    				list.add(((ActiveCell) cell).getHWordLink());
+    			}
+    		}
+    	}
+    	return list;
     }
-
+    
+    private List<String> getVerticalList (Scanword scanword) {
+    	List<String> list = new LinkedList<String> ();
+    	for(int indexC = 0; indexC < scanword.getColumns(); indexC++) {
+    		for (int indexR = 0; indexR < scanword.getRow(); indexR++) {
+    			Cell cell = scanword.getArrayElement(indexR, indexC);
+    			if (cell instanceof ActiveCell && ((ActiveCell) cell).getVDirection()) {
+    				list.add(((ActiveCell) cell).getVWordLink());
+    			}
+    		}
+    	}
+    	return list;
+    }
 }
