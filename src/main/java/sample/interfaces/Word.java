@@ -1,5 +1,7 @@
 package sample.interfaces;
 
+import java.util.*;
+
 /**
  * Created by VAUst on 31.12.2016.
  */
@@ -13,4 +15,6 @@ public interface Word {
     public List<Category> getCategories ();
     public String getValue ();
     public String getDescription ();
+    public boolean containsCategory (Category category);
+    public boolean containsCategory (String categoryName);
 }

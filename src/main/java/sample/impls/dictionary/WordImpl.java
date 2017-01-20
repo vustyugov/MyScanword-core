@@ -1,7 +1,6 @@
 package sample.impls.dictionary;
 
-import sample.interfaces.Category;
-import sample.interfaces.Word;
+import sample.interfaces.*;
 
 import java.util.*;
 
@@ -76,4 +75,29 @@ public class WordImpl implements Word{
     public String getDescription() {
         return description;
     }
+
+	@Override
+	public boolean containsCategory(Category category) {
+		return categories.stream()
+				.anyMatch(c-> c.equals(category));
+	}
+
+	@Override
+	public boolean containsCategory(String categoryName) {
+		return categories.stream()
+				.anyMatch(c -> c.getValue().equals(categoryName));
+	}
+	
+	@Override
+	public boolean equals (Object obj) {
+		if (obj instanceof Word) {
+			if (value.equals(((Word) obj).getValue())) {
+				return true;
+			}
+			return false;
+		}
+		else {
+			return false;
+		}
+	}
 }

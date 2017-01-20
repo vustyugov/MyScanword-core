@@ -4,6 +4,11 @@ package sample.impls.cell;
  * Created by VAUst on 08.12.2016.
  */
 public class ActiveCell extends SimpleCell {
+	
+	private boolean hDirection;
+	private boolean vDirection;
+	private String hWordLink;
+	private String vWordLink;
 
     public ActiveCell () {
         linkReg = "[1-8]{1}.[1-8]{1}";
@@ -11,6 +16,10 @@ public class ActiveCell extends SimpleCell {
         super.letter = "";
         super.firstLink = "-1.-1";
         super.secondLink = "-1.-1";
+        hDirection = false;
+        vDirection = false;
+        hWordLink = "";
+        vWordLink = "";
     }
 
     @Override
@@ -28,6 +37,39 @@ public class ActiveCell extends SimpleCell {
         super.setSecondLink(secondLink);
     }
 
+    public void setHDirection (boolean value) {
+    	hDirection = value;
+    }
+    
+    public boolean getHDirection () {
+    	return hDirection;
+    }
+    
+    public void setVDirection (boolean value) {
+    	vDirection = value;
+    }
+    
+    public boolean getVDirection () {
+    	return vDirection;
+    }
+    
+    public void setHWordLink (String word) {
+    	hWordLink = word;
+    }
+    
+    public String getHWordLink () {
+    	return hWordLink;
+    }
+
+    public void setVWordLink (String word) {
+    	vWordLink = word;
+    }
+    
+    public String getVWordLink () {
+    	return vWordLink;
+    }
+
+    
     @Override
     public String toString() {
         return super.toString();

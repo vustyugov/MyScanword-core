@@ -54,4 +54,14 @@ public class CategoryImpl implements Category {
     public String getDescription() {
         return null;
     }
+
+    @Override
+    public boolean equals (Object obj) {
+    	if (obj instanceof Category) {
+    		return (value.equals(((Category) obj).getValue()))?true:false;
+    	}
+    	else {
+    		return false;
+    	}
+    }
 }

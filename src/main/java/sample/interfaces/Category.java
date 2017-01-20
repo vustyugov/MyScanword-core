@@ -1,5 +1,7 @@
 package sample.interfaces;
 
+import java.util.List;
+
 /**
  * Created by VAUst on 31.12.2016.
  */

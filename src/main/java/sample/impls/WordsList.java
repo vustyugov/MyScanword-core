@@ -47,6 +47,7 @@ public class WordsList {
     }
 
     private List<String> getHorizontalList (Scanword scanword) {
+    	return null;
     }
 
 }

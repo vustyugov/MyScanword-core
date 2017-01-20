@@ -57,8 +57,8 @@ public class SquaredScanword implements Scanword {
 
     @Override
     public Cell getArrayElement(int rowIndex, int columnIndex) {
-        if (rowIndex < getRow() && rowIndex > 0
-                && columnIndex < getColumns() && columnIndex > 0) {
+        if (rowIndex < getRow() && rowIndex >= 0
+                && columnIndex < getColumns() && columnIndex >= 0) {
             return array[rowIndex][columnIndex];
         }
         else {
