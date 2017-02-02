@@ -1,9 +1,8 @@
 package sample.impls;
 
-import sample.interfaces.Category;
-import sample.interfaces.Word;
+import sample.interfaces.*;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -13,6 +12,11 @@ public class Dictionary {
     private static volatile Dictionary instance;
     private List<Word> words;
     private List<Category> categories;
+    
+    private Dictionary () {
+    	words = new LinkedList<Word> ();
+    	categories = new LinkedList<Category> ();
+    }
 
     public static Dictionary getInstance() {
     	Dictionary localInstance = instance;

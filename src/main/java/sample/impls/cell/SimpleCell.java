@@ -16,7 +16,7 @@ public class SimpleCell implements Cell {
     protected String secondLink;
 
     public SimpleCell () {
-        letterReg = "[А-ЯЁ]{1}";
+        letterReg = "[\\u0410-\\u042F, \\0401]{1}";
         linkReg = "";
         type = "SC";
         letter = "";
@@ -50,7 +50,7 @@ public class SimpleCell implements Cell {
 
     @Override
     public void setSecondLink(String secondLink) {
-        if (Pattern.matches(linkReg, firstLink)) {
+        if (Pattern.matches(linkReg, secondLink)) {
             this.secondLink = secondLink;
         }
     }

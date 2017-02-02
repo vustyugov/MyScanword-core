@@ -5,10 +5,10 @@ package sample.impls.cell;
  */
 public class ActiveCell extends SimpleCell {
 	
-	private boolean hDirection;
-	private boolean vDirection;
-	private String hWordLink;
-	private String vWordLink;
+	protected boolean hDirection;
+	protected boolean vDirection;
+	protected String hWordLink;
+	protected String vWordLink;
 
     public ActiveCell () {
         linkReg = "[1-8]{1}.[1-8]{1}";

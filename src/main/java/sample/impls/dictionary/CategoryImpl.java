@@ -47,12 +47,12 @@ public class CategoryImpl implements Category {
 
     @Override
     public String getValue() {
-        return null;
+        return this.value;
     }
 
     @Override
     public String getDescription() {
-        return null;
+        return this.description;
     }
 
     @Override
