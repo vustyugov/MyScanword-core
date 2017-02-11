@@ -99,4 +99,9 @@ public class SimpleCell implements Cell {
 	public int getCountFreeLink() {
 		return 0;
 	}
+
+	@Override
+	public void setLink(String link) {
+		
+	}
 }

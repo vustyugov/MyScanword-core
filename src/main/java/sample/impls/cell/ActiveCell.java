@@ -26,6 +26,20 @@ public class ActiveCell extends SimpleCell {
     public void setLetter (String letter) {
         super.setLetter(letter);
     }
+    
+    @Override
+    public void setLink(String link) {
+    	if (!super.firstLink.equals("0.0")
+    			&& !super.secondLink.equals("0.0")) {
+    		return;
+    	}
+    	if (!super.firstLink.equals("0.0")) {
+    		this.setSecondLink(link);
+    	}
+    	else {
+    		this.setFirstLink(link);
+    	}
+    }
 
     @Override
     public void setFirstLink (String firstLink) {

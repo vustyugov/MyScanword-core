@@ -6,6 +6,7 @@ package sample.interfaces;
 public interface Cell {
     void setLetter (String letter);
     String getLetter ();
+    void setLink(String link);
     void setFirstLink (String firstLink);
     String getFirstLink ();
     void setSecondLink (String secondLink);

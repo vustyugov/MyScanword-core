@@ -20,6 +20,20 @@ public class CommentCell extends SimpleCell {
     }
 
     @Override
+    public void setLink (String link) {
+    	if (!super.firstLink.equals("0.0.0")
+    			&& !super.secondLink.equals("0.0.0")) {
+    		return;
+    	}
+    	if (!super.firstLink.equals("0.0.0")) {
+    		this.setSecondLink(link);
+    	}
+    	else {
+    		this.setFirstLink(link);
+    	}
+    }
+    
+    @Override
     public void setFirstLink (String firstLink) {
         super.setFirstLink(firstLink);
     }
