@@ -10,4 +10,6 @@ public interface Cell {
     String getFirstLink ();
     void setSecondLink (String secondLink);
     String getSecondLink ();
+    int getCountAvailableLink();
+    int getCountFreeLink();
 }

@@ -66,12 +66,37 @@ public class SimpleCell implements Cell {
         buf.append("[");
         buf.append(type);
         buf.append("][");
-        buf.append(letter);
+        if (letter.equals("")) {
+        	buf.append(" ");
+        }
+        else {
+        	buf.append(letter);
+        }
         buf.append("][");
-        buf.append(firstLink);
+        if (firstLink.equals("")) {
+        	buf.append("");
+        }
+        else {
+        	buf.append(firstLink);
+        }
         buf.append("][");
-        buf.append(secondLink);
+        if (secondLink.equals("")) {
+        	buf.append("");
+        }
+        else {
+        	buf.append(secondLink);
+        }
         buf.append("]]");
         return buf.toString();
     }
+
+	@Override
+	public int getCountAvailableLink() {
+		return 0;
+	}
+
+	@Override
+	public int getCountFreeLink() {
+		return 0;
+	}
 }

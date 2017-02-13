@@ -2,19 +2,12 @@ package sample.impls.dictionary;
 
 import static org.junit.Assert.*;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
+
+import sample.impls.cell.*;
+import sample.interfaces.*;
 
 public class WordImplTest {
-
-	@Before
-	public void setUp() throws Exception {
-	}
-
-	@After
-	public void tearDown() throws Exception {
-	}
 
 	@Test
 	public void test() {

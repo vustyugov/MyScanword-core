@@ -6,12 +6,12 @@ package sample.impls.cell;
 public class CommentCell extends SimpleCell {
 
     public CommentCell() {
-        linkReg = "[1-8]{1}.[1-8]{1}.[1,3]{1}";
+        linkReg = "[0-9]{1}.[0-9]{1}.[0,1,3,9]{1}";
         letterReg = "";
         super.type = "CC";
         super.letter = "";
-        super.firstLink = "-1.-1.-1";
-        super.secondLink = "-1.-1.-1";
+        super.firstLink = "0.0.0";
+        super.secondLink = "0.0.0";
     }
 
     @Override
@@ -27,6 +27,23 @@ public class CommentCell extends SimpleCell {
     @Override
     public void setSecondLink (String secondLink) {
         super.setSecondLink(secondLink);
+    }
+    
+    @Override
+    public int getCountAvailableLink() {
+    	return 2;
+    }
+    
+    @Override
+    public int getCountFreeLink() {
+    	if (firstLink.equals("0.0.0") && secondLink.equals("0.0.0")) {
+    		return 2;
+    	}
+    	else if ((firstLink.equals("0.0.0") && !secondLink.equals("0.0.0"))
+    			|| (!firstLink.equals("0.0.0") && secondLink.equals("0.0.0"))) {
+    		return 1;
+    	}
+    	return 0;
     }
 
     @Override

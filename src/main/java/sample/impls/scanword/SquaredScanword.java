@@ -16,6 +16,7 @@ public class SquaredScanword implements Scanword {
     private Date changingTime;
 
     public SquaredScanword (String name, int rows, int columns) {
+    	this.name = name;
         array = new Cell[rows][columns];
         creationTime = new Date ();
         changingTime = new Date ();
@@ -79,5 +80,19 @@ public class SquaredScanword implements Scanword {
     @Override
     public Date getCreationTime() {
         return creationTime;
+    }
+    
+    @Override 
+    public String toString() {
+    	StringBuffer buf = new StringBuffer();
+    	buf.append(name);
+    	buf.append("\n");
+    	for (int indexR = 0; indexR < array.length; indexR++) {
+    		for (int indexC = 0; indexC < array[0].length; indexC++) {
+    			buf.append(String.format("%-24s", array[indexR][indexC]));
+    		}
+    		buf.append("\n");
+    	}
+    	return buf.toString();
     }
 }

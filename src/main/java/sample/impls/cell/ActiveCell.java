@@ -11,11 +11,11 @@ public class ActiveCell extends SimpleCell {
 	protected String vWordLink;
 
     public ActiveCell () {
-        linkReg = "[1-8]{1}.[1-8]{1}";
+        linkReg = "[0-9]{1}.[0-9]{1}";
         type = "AC";
         super.letter = "";
-        super.firstLink = "-1.-1";
-        super.secondLink = "-1.-1";
+        super.firstLink = "9.9";
+        super.secondLink = "9.9";
         hDirection = false;
         vDirection = false;
         hWordLink = "";
@@ -35,6 +35,30 @@ public class ActiveCell extends SimpleCell {
     @Override
     public void setSecondLink (String secondLink) {
         super.setSecondLink(secondLink);
+    }
+    
+    @Override
+    public int getCountAvailableLink() {
+    	if(hDirection && vDirection) {
+    		return 2;
+    	}
+    	else if (hDirection && !vDirection
+    			|| !hDirection && vDirection) {
+    		return 1;
+    	}
+   		return 0;
+    }
+    
+    @Override
+    public int getCountFreeLink() {
+    	if (firstLink.equals("0.0") && secondLink.equals("0.0")) {
+    		return 2;
+    	}
+    	if ((firstLink.equals("0.0") && !secondLink.equals("0.0"))
+    			|| (!firstLink.equals("0.0") && secondLink.equals("0.0"))) {
+    		return 1;
+    	}
+    	return 0;
     }
 
     public void setHDirection (boolean value) {
