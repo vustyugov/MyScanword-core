@@ -15,11 +15,15 @@ public class SquaredScanword implements Scanword {
     private Date creationTime;
     private Date changingTime;
 
-    public SquaredScanword (String name, int rows, int columns) {
+    public SquaredScanword (String name) {
     	this.name = name;
-        array = new Cell[rows][columns];
         creationTime = new Date ();
         changingTime = new Date ();
+    }
+    
+    public SquaredScanword (String name, int rows, int columns) {
+    	this(name);
+        array = new Cell[rows][columns];
     }
 
     @Override

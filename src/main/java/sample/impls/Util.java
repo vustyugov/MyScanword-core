@@ -30,7 +30,7 @@ public final class Util {
     	positions.put("leftBottom",leftBottom);
 	}
 
-	private static int getCountFreeLinksInOneTypeCells(Scanword scanword, Class<? extends Cell> myClass) {
+	public static int getCountFreeLinksInOneTypeCells(Scanword scanword, Class<? extends Cell> myClass) {
 		int count = 0;
 		for (int row = 0; row < scanword.getRow(); row++) {
 			for (int column = 0; column < scanword.getColumns(); column++) {
@@ -180,8 +180,10 @@ public final class Util {
 		boolean flag = true;
 		for (int row = 0; row < pattern.getArray().length; row++) {
 			for (int column = 0; column < pattern.getArray()[0].length; column++) {
-				if (scanword.getArrayElement(row+rowPosition, column+columnPosition).getClass().getName()
-						.equals(pattern.getArray()[row][column].getClass().getName())) {
+				Cell sCell = scanword.getArrayElement(row+rowPosition, column+columnPosition);
+				Cell pCell = pattern.getArray()[row][column];
+				if (sCell.getClass().getName()
+						.equals(pCell.getClass().getName())) {
 					flag &= true;
 				}
 				else {
@@ -192,77 +194,104 @@ public final class Util {
 		return flag; 
 	}
 	
+	private static boolean isRightKeyValue (Scanword scanword, int row, int column, Pattern pattern) {
+		if ((row+pattern.getArray().length)>scanword.getRow()
+				|| (column+pattern.getArray()[0].length)>scanword.getColumns()) {
+			return false;
+		}
+		if (pattern.getKeyValue()[0] == -1 && pattern.getKeyValue()[1] == -1) {
+			return true;
+		}
+		else {
+			if (equalsSubArrayToPattern(scanword, row, column, pattern)) {
+				if (scanword.getArrayElement(row + pattern.getKeyValue()[0], column + pattern.getKeyValue()[1]).getCountFreeLink() == 0) {
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
+			else {
+				return false;
+			}
+		}
+	}
+	
 	public static boolean createArrawsInActiveAndCommentCells (Scanword scanword, Pattern pattern) {
 		if (getCountFreeLinksInOneTypeCells(scanword, ActiveCell.class)==0) {
 			System.out.println("Can't create, because ActiveCells does not exists.");
 			return false;
 		}
 		else {
-			for (int row = 0; row < scanword.getRow()-pattern.getArray().length+1; row++) {
-				for (int column = 0; column < scanword.getColumns()-pattern.getArray()[0].length+1; column++) {
-					if (pattern.getPosition() == Pattern.Position.CENTRAL
-							&& row > 0 && row < scanword.getRow()-1
-							&& column > 0 && column < scanword.getColumns()-1) {
-						boolean label = equalsSubArrayToPattern(scanword, row, column, pattern);
-						if (label) {
-							for (int pRow = 0; pRow < pattern.getArray().length; pRow++) {
-								for (int pColumn = 0; pColumn < pattern.getArray()[0].length; pColumn++) {
-									Cell cell = scanword.getArrayElement(row+pRow, column+pColumn);
-									cell.setFirstLink(pattern.getArray()[pRow][pColumn].getFirstLink());
-									cell.setSecondLink(pattern.getArray()[pRow][pColumn].getSecondLink());
-									scanword.setArrayElement(cell, row+pRow, column+pColumn);
-								}
-							}
+			for (int row = 0; row < scanword.getRow(); row++) {
+				for (int column = 0; column < scanword.getColumns(); column++) {
+					if (isRightKeyValue(scanword, row, column, pattern)) {
+						if (pattern.getPosition() == Pattern.Position.CENTRAL
+								&& row > 0 && row <= scanword.getRow()-pattern.getArray().length
+								&& column > 0 && column <= scanword.getColumns()-pattern.getArray()[0].length) {
+							setSubArray(scanword, pattern, row, column);
 						}
-					}
-					else if (pattern.getPosition() == Pattern.Position.LEFT_TOP_ANGLE
+						else if (pattern.getPosition() == Pattern.Position.LEFT_TOP_ANGLE
 								&& row == 0 && column == 0) {
-						boolean label = equalsSubArrayToPattern(scanword, row, column, pattern);
-						if (label) {
-							for (int pRow = 0; pRow < pattern.getArray().length; pRow++) {
-								for (int pColumn = 0; pColumn < pattern.getArray()[0].length; pColumn++) {
-									Cell cell = scanword.getArrayElement(row+pRow, column+pColumn);
-									cell.setFirstLink(pattern.getArray()[pRow][pColumn].getFirstLink());
-									cell.setSecondLink(pattern.getArray()[pRow][pColumn].getSecondLink());
-									scanword.setArrayElement(cell, row+pRow, column+pColumn);
-								}
-							}
+							setSubArray(scanword, pattern, row, column);
 						}
-					}
-					else if (pattern.getPosition() == Pattern.Position.RIGHT_TOP_ANGLE
+						else if (pattern.getPosition() == Pattern.Position.RIGHT_TOP_ANGLE
 								&& column == scanword.getColumns()-pattern.getArray()[0].length
 								&& row == 0) {
-						boolean label = equalsSubArrayToPattern(scanword, row, column, pattern);
-						if (label) {
-							for (int pRow = 0; pRow < pattern.getArray().length; pRow++) {
-								for (int pColumn = 0; pColumn < pattern.getArray()[0].length; pColumn++) {
-									Cell cell = scanword.getArrayElement(row+pRow, column+pColumn);
-									cell.setFirstLink(pattern.getArray()[pRow][pColumn].getFirstLink());
-									cell.setSecondLink(pattern.getArray()[pRow][pColumn].getSecondLink());
-									scanword.setArrayElement(cell, row+pRow, column+pColumn);
-								}
-							}
+							setSubArray(scanword, pattern, row, column);
 						}
-					}
-					else if (pattern.getPosition() == Pattern.Position.RIGHT_BOUNDARY
-								&& row > 0 && row < scanword.getRow()-1
+						else if (pattern.getPosition() == Pattern.Position.RIGHT_BOUNDARY
+								&& row > 0 && row < scanword.getRow()-pattern.getArray().length
 								&& column == scanword.getColumns()-pattern.getArray()[0].length) {
-						boolean label = equalsSubArrayToPattern(scanword, row, column, pattern);
-						if (label) {
-							for (int pRow = 0; pRow < pattern.getArray().length; pRow++) {
-								for (int pColumn = 0; pColumn < pattern.getArray()[0].length; pColumn++) {
-									Cell cell = scanword.getArrayElement(row+pRow, column+pColumn);
-									cell.setFirstLink(pattern.getArray()[pRow][pColumn].getFirstLink());
-									cell.setSecondLink(pattern.getArray()[pRow][pColumn].getSecondLink());
-									scanword.setArrayElement(cell, row+pRow, column+pColumn);
-								}
-							}
+							setSubArray(scanword, pattern, row, column);
 						}
-						
+						else if (pattern.getPosition() == Pattern.Position.BOTTOM_BOUNDARY
+								&& column > 0 && column < scanword.getColumns()-pattern.getArray()[0].length
+								&& row == scanword.getRow()-pattern.getArray().length) {
+							setSubArray(scanword, pattern, row, column);
+						}
+						else if (pattern.getPosition() == Pattern.Position.LEFT_BOUNDARY
+								&& row > 0 && row < scanword.getRow()-pattern.getArray().length
+								&& column == 0) {
+							setSubArray(scanword, pattern, row, column);
+						}
+						else if (pattern.getPosition() == Pattern.Position.TOP_BOUNDARY
+								&& column > 0 && column < scanword.getColumns()-pattern.getArray()[0].length
+								&& row == 0) {
+							setSubArray(scanword, pattern, row, column);
+						}
+						else if (pattern.getPosition() == Pattern.Position.LEFT_BOTTOM_ANGLE
+								&& row == scanword.getRow()-pattern.getArray().length
+								&& column == 0) {
+							setSubArray(scanword, pattern, row, column);
+						}
+						else if (pattern.getPosition() == Pattern.Position.RIGHT_BOTTOM_ANGLE
+								&& row == scanword.getRow()-pattern.getArray().length
+								&& column == scanword.getColumns()-pattern.getArray()[0].length) {
+							setSubArray(scanword, pattern, row, column);
+						}
 					}
 				}
 			}
 			return true;
+		}
+	}
+	
+	private static void setSubArray(Scanword scanword, Pattern pattern, int row, int column) {
+		boolean label = equalsSubArrayToPattern(scanword, row, column, pattern);
+		if (label) {
+			for (int pRow = 0; pRow < pattern.getArray().length; pRow++) {
+				for (int pColumn = 0; pColumn < pattern.getArray()[0].length; pColumn++) {
+					Cell cell = scanword.getArrayElement(row+pRow, column+pColumn);
+					if (cell.getFirstLink().equals("0.0")||cell.getFirstLink().equals("0.0.0")) {
+						cell.setFirstLink(pattern.getArray()[pRow][pColumn].getFirstLink());
+					}
+					if (cell.getSecondLink().equals("0.0.0") || cell.getSecondLink().equals("0.0")) {
+						cell.setSecondLink(pattern.getArray()[pRow][pColumn].getSecondLink());
+					}
+					scanword.setArrayElement(cell, row+pRow, column+pColumn);
+				}
+			}
 		}
 	}
 	

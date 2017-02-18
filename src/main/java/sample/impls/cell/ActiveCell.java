@@ -14,8 +14,8 @@ public class ActiveCell extends SimpleCell {
         linkReg = "[0-9]{1}.[0-9]{1}";
         type = "AC";
         super.letter = "";
-        super.firstLink = "9.9";
-        super.secondLink = "9.9";
+        super.firstLink = "0.0";
+        super.secondLink = "0.0";
         hDirection = false;
         vDirection = false;
         hWordLink = "";

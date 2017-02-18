@@ -16,7 +16,7 @@ public class SimpleCell implements Cell {
     protected String secondLink;
 
     public SimpleCell () {
-        letterReg = "[\\u0410-\\u042F, \\0401]{1}";
+        letterReg = "[\\u0410-\\u044F\\u0401\\u0451]{1}";
         linkReg = "";
         type = "SC";
         letter = "";

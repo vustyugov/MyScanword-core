@@ -13,15 +13,21 @@ public class CategoryImpl implements Category {
     private String description;
     private List<String> changeHistory;
 
-    public CategoryImpl(String value, String description, List<String> changeHistory) {
-        this.value = value;
+    public CategoryImpl(String value) {
+    	this.value = value;
+    	changeHistory = new LinkedList<String>();
+        changeHistory();
+    }
+    
+    public CategoryImpl(String value, String description) {
+    	this(value);
         this.description = description;
+    }
+    
+    public CategoryImpl(String value, String description, List<String> changeHistory) {
+        this(value, description);
         if (changeHistory != null) {
             this.changeHistory = changeHistory;
-        }
-        else {
-            changeHistory = new LinkedList<String>();
-            changeHistory();
         }
     }
 

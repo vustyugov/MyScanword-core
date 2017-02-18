@@ -13,20 +13,30 @@ public class WordImpl implements Word{
     private List<Category> categories;
     private List<String> changeHistory;
 
-    public WordImpl(String value, String description, List<Category> categories, List<String> changeHistory) {
-        this.value = value;
+    public WordImpl(String value) {
+    	this.value = value;
+    	changeHistory = new LinkedList<String>();
+    }
+    
+    public WordImpl(String value, String description) {
+    	this(value);
         this.description = description;
+    }
+    
+    public WordImpl(String value, String description, List<Category> categories) {
+    	this(value, description);
         if (categories != null) {
             this.categories = categories;
         }
         else {
             categories = new LinkedList<Category>();
         }
+    }
+    
+    public WordImpl(String value, String description, List<Category> categories, List<String> changeHistory) {
+        this(value, description, categories);
         if (changeHistory != null) {
             this.changeHistory = changeHistory;
-        }
-        else {
-            changeHistory = new LinkedList<String>();
         }
     }
 

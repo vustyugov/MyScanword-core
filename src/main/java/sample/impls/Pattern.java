@@ -16,13 +16,15 @@ public final class Pattern {
 	}
 	
 	private Position position = null;
-	private int[] keyValue = null;
+	private int[] keyValue = {-1,-1};
 	private Cell[][] array = null;
 	
 	public Pattern(Position position, int[] keyValue, Cell[][] array) {
 		this.position = position;
-		this.keyValue = keyValue;
 		this.array = array;
+		if (keyValue != null) {
+			this.keyValue = keyValue;
+		}
 	}
 	
 	public Position getPosition() {
