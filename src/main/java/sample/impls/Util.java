@@ -300,4 +300,58 @@ public final class Util {
 		
 		return null;
 	}
+
+	public static void changeLinkFromFreeToBusyValue(Scanword scanword) {
+		for (int row = 1; row < scanword.getRow()-1; row++) {
+			for (int column = 1; column < scanword.getColumns()-1; column++) {
+				Cell cell = scanword.getArrayElement(row, column);
+				String position = "";
+				if (row == 0 && column == 0) {
+					position = "leftTop";
+				}
+				else if (row == 0 && column == scanword.getColumns()-1) {
+					position = "rightTop";
+				}
+				else if (row == scanword.getRow()-1 && column == 0 ) {
+					position = "leftBottom";
+				}
+				else if (row == scanword.getRow()-1 && column == scanword.getColumns()-1) {
+					position = "rightBOttom";
+				}
+				else if (row ==0 && column >0 && column < scanword.getColumns()-1) {
+					position = "top";
+				}
+				else if (row == scanword.getRow()-1 && column > 0 && column < scanword.getColumns()-1) {
+					position = "bottom";
+				}
+				else if (row > 0 && row < scanword.getRow()-1 && column == 0) {
+					position = "left";
+				}
+				else if (row > 0 && row < scanword.getRow()-1 && column == scanword.getColumns()-1) {
+					position = "right";
+				}
+				else {
+					position = "central";
+				}
+				if (cell instanceof ActiveCell & cell.getCountFreeLink()>0 
+						& getCountNeighbourCellsOtherType(scanword, row, column, ActiveCell.class, CommentCell.class, position).size()==0) {
+					if (cell.getFirstLink().equals("0.0")) {
+						cell.setFirstLink("9.9");
+					}
+					if (cell.getSecondLink().equals("0.0")) {
+						cell.setSecondLink("9.9");
+					}
+				}
+				if (cell instanceof CommentCell & cell.getCountFreeLink()>0
+						& getCountNeighbourCellsOtherType(scanword, row, column, CommentCell.class, ActiveCell.class, position).size()==0) {
+					if (cell.getFirstLink().equals("0.0")) {
+						cell.setFirstLink("9.9");
+					}
+					if (cell.getSecondLink().equals("0.0")) {
+						cell.setSecondLink("9.9");
+					}
+				}
+			}
+		}
+	}
 }
