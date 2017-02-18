@@ -56,7 +56,6 @@ public final class Util {
 			}
 		}
 		return list;
-		
 	}
 	
 	public static boolean changeSimpleCellsToActiveCells (Scanword scanword) {
@@ -199,17 +198,23 @@ public final class Util {
 				|| (column+pattern.getArray()[0].length)>scanword.getColumns()) {
 			return false;
 		}
-		if (pattern.getKeyValue()[0] == -1 && pattern.getKeyValue()[1] == -1) {
+		if (pattern.getKeyValue().size() == 0) {
 			return true;
 		}
+
 		else {
-			if (equalsSubArrayToPattern(scanword, row, column, pattern)) {
-				if (scanword.getArrayElement(row + pattern.getKeyValue()[0], column + pattern.getKeyValue()[1]).getCountFreeLink() == 0) {
-					return true;
+			boolean lable = equalsSubArrayToPattern(scanword, row, column, pattern);
+			if (lable) {
+				boolean flag = true;				
+				for (int index = 0; index < pattern.getKeyValue().size(); index++) {
+					if (scanword.getArrayElement(row + pattern.getKeyValue().get(index)[0], column + pattern.getKeyValue().get(index)[1]).getCountFreeLink() == 0) {
+						flag &= true;
+					}
+					else {
+						flag = false;
+					}
 				}
-				else {
-					return false;
-				}
+				return flag;
 			}
 			else {
 				return false;
@@ -333,23 +338,53 @@ public final class Util {
 				else {
 					position = "central";
 				}
-				if (cell instanceof ActiveCell & cell.getCountFreeLink()>0 
-						& getCountNeighbourCellsOtherType(scanword, row, column, ActiveCell.class, CommentCell.class, position).size()==0) {
-					if (cell.getFirstLink().equals("0.0")) {
-						cell.setFirstLink("9.9");
+				if (cell instanceof ActiveCell & cell.getCountFreeLink()>0) {
+					List<Integer[]> cells = getCountNeighbourCellsOtherType(scanword, row, column, ActiveCell.class, CommentCell.class, position);
+					if (cells.size()>0) {
+						boolean lable = true;
+						for (int index = 0; index< cells.size(); index++) {
+							if (scanword.getArrayElement(row + cells.get(index)[0], column+ cells.get(index)[1]).getCountFreeLink() == 0) {
+								lable &= true;
+							}
+							else {
+								lable = false;
+							}
+						}
+						if (lable) {
+							if (cell.getFirstLink().equals("0.0")) {
+								cell.setFirstLink("9.9");
+							}
+							if (cell.getSecondLink().equals("0.0")) {
+								cell.setSecondLink("9.9");
+							}
+						}
 					}
-					if (cell.getSecondLink().equals("0.0")) {
-						cell.setSecondLink("9.9");
-					}
+					
+					
 				}
-				if (cell instanceof CommentCell & cell.getCountFreeLink()>0
-						& getCountNeighbourCellsOtherType(scanword, row, column, CommentCell.class, ActiveCell.class, position).size()==0) {
-					if (cell.getFirstLink().equals("0.0")) {
-						cell.setFirstLink("9.9");
+				if (cell instanceof CommentCell & cell.getCountFreeLink()>0) {
+					List<Integer[]> cells = getCountNeighbourCellsOtherType(scanword, row, column, CommentCell.class, ActiveCell.class, position);
+					if (cells.size()>0) {
+						boolean lable = true;
+						for (int index = 0; index< cells.size(); index++) {
+							if (scanword.getArrayElement(row + cells.get(index)[0], column + cells.get(index)[1]).getCountFreeLink() == 0) {
+								lable &= true;
+							}
+							else {
+								lable = false;
+							}
+						}
+						if (lable) {
+							if (cell.getFirstLink().equals("0.0.0")) {
+								cell.setFirstLink("9.9.9");
+							}
+							if (cell.getSecondLink().equals("0.0.0")) {
+								cell.setSecondLink("9.9.9");
+							}
+						}
 					}
-					if (cell.getSecondLink().equals("0.0")) {
-						cell.setSecondLink("9.9");
-					}
+					
+					
 				}
 			}
 		}

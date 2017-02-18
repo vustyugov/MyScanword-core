@@ -1,5 +1,7 @@
 package sample.impls;
 
+import java.util.*;
+
 import sample.interfaces.Cell;
 
 public final class Pattern {
@@ -16,14 +18,17 @@ public final class Pattern {
 	}
 	
 	private Position position = null;
-	private int[] keyValue = {-1,-1};
+	private List<int[]> keyValue = null;
 	private Cell[][] array = null;
 	
-	public Pattern(Position position, int[] keyValue, Cell[][] array) {
+	public Pattern(Position position, List<int[]> keyValue, Cell[][] array) {
 		this.position = position;
 		this.array = array;
 		if (keyValue != null) {
 			this.keyValue = keyValue;
+		}
+		else {
+			this.keyValue = new LinkedList<int[]>();
 		}
 	}
 	
@@ -31,7 +36,7 @@ public final class Pattern {
 		return position;
 	}
 	
-	public int[] getKeyValue () {
+	public List<int[]> getKeyValue () {
 		return keyValue;
 	}
 	
@@ -44,7 +49,9 @@ public final class Pattern {
 		StringBuffer buf = new StringBuffer();
 		buf.append(position);
 		buf.append("\n");
-    	buf.append(keyValue);
+		for (int index = 0; index <keyValue.size(); index++) {
+			buf.append(keyValue.get(index));
+		}
     	buf.append("\n");
     	for (int indexR = 0; indexR < array.length; indexR++) {
     		for (int indexC = 0; indexC < array[0].length; indexC++) {
