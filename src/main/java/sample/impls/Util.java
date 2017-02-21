@@ -307,8 +307,8 @@ public final class Util {
 	}
 
 	public static void changeLinkFromFreeToBusyValue(Scanword scanword) {
-		for (int row = 1; row < scanword.getRow()-1; row++) {
-			for (int column = 1; column < scanword.getColumns()-1; column++) {
+		for (int row = 0; row < scanword.getRow(); row++) {
+			for (int column = 0; column < scanword.getColumns(); column++) {
 				Cell cell = scanword.getArrayElement(row, column);
 				String position = "";
 				if (row == 0 && column == 0) {
@@ -339,6 +339,12 @@ public final class Util {
 					position = "central";
 				}
 				if (cell instanceof ActiveCell & cell.getCountFreeLink()>0) {
+					if (!((ActiveCell)cell).getHDirection() & cell.getSecondLink().equals("0.0")) {
+						cell.setSecondLink("9.9");
+					}
+					if (!((ActiveCell)cell).getVDirection() & cell.getFirstLink().equals("0.0")) {
+						cell.setFirstLink("9.9");
+					}
 					List<Integer[]> cells = getCountNeighbourCellsOtherType(scanword, row, column, ActiveCell.class, CommentCell.class, position);
 					if (cells.size()>0) {
 						boolean lable = true;
@@ -359,14 +365,12 @@ public final class Util {
 							}
 						}
 					}
-					
-					
 				}
 				if (cell instanceof CommentCell & cell.getCountFreeLink()>0) {
 					List<Integer[]> cells = getCountNeighbourCellsOtherType(scanword, row, column, CommentCell.class, ActiveCell.class, position);
 					if (cells.size()>0) {
 						boolean lable = true;
-						for (int index = 0; index< cells.size(); index++) {
+						for (int index = 0; index < cells.size(); index++) {
 							if (scanword.getArrayElement(row + cells.get(index)[0], column + cells.get(index)[1]).getCountFreeLink() == 0) {
 								lable &= true;
 							}
@@ -383,8 +387,6 @@ public final class Util {
 							}
 						}
 					}
-					
-					
 				}
 			}
 		}
