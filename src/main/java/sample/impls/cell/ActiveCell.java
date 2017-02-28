@@ -28,16 +28,28 @@ public class ActiveCell extends SimpleCell {
     }
     
     @Override
-    public void setLink(String link) {
-    	if (!super.firstLink.equals("0.0")
-    			&& !super.secondLink.equals("0.0")) {
-    		return;
+    public boolean setLink(String link) {
+    	if (super.firstLink.equals(link)
+    			|| super.secondLink.equals(link)) {
+    		return false;
     	}
-    	if (!super.firstLink.equals("0.0")) {
+    	else if (!super.firstLink.equals("0.0")
+    			&& !super.secondLink.equals("0.0")) {
+    		return false;
+    	}
+    	else if (!super.firstLink.equals("0.0")
+    			&& super.secondLink.equals("0.0")) {
     		this.setSecondLink(link);
+    		return true;
+    	}
+    	else if (super.firstLink.equals("0.0")
+    			&& !super.secondLink.equals("0.0")){
+    		this.setFirstLink(link);
+    		return true;
     	}
     	else {
     		this.setFirstLink(link);
+    		return true;
     	}
     }
 

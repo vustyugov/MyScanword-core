@@ -18,17 +18,33 @@ public final class Pattern {
 	}
 	
 	private Position position = null;
-	private List<int[]> keyValue = null;
+	private List<int[]> indexesCellsWithoutFreeLinks = null;
+	private List<int[]> indexesCellsWithOneFreeLink = null;
+	private List<int[]> indexesCellsWithTwoFreeLinks = null;
 	private Cell[][] array = null;
 	
-	public Pattern(Position position, List<int[]> keyValue, Cell[][] array) {
+	public Pattern(Position position, List<int[]> indexesCellsWithoutFreeLinks, 
+			List<int[]> indexesCellsWithOneFreeLinks, List<int[]> indexesCellsWithTwoFreeLinks, Cell[][] array) {
 		this.position = position;
 		this.array = array;
-		if (keyValue != null) {
-			this.keyValue = keyValue;
+		if (indexesCellsWithoutFreeLinks != null) {
+			this.indexesCellsWithoutFreeLinks = indexesCellsWithoutFreeLinks;
 		}
 		else {
-			this.keyValue = new LinkedList<int[]>();
+			this.indexesCellsWithoutFreeLinks = new LinkedList<int[]>();
+			
+		}
+		if (indexesCellsWithOneFreeLinks != null) {
+			this.indexesCellsWithOneFreeLink = indexesCellsWithOneFreeLinks;
+		}
+		else {
+			this.indexesCellsWithOneFreeLink = new LinkedList<int[]>();
+		}
+		if (indexesCellsWithTwoFreeLinks != null) {
+			this.indexesCellsWithTwoFreeLinks = indexesCellsWithTwoFreeLinks;
+		}
+		else {
+			this.indexesCellsWithTwoFreeLinks = indexesCellsWithTwoFreeLinks;
 		}
 	}
 	
@@ -36,8 +52,16 @@ public final class Pattern {
 		return position;
 	}
 	
-	public List<int[]> getKeyValue () {
-		return keyValue;
+	public List<int[]> indexesCellWithoutFreeLinks () {
+		return indexesCellsWithoutFreeLinks;
+	}
+	
+	public List<int[]> indexesCellWithOneFreeLinks () {
+		return indexesCellsWithOneFreeLink;
+	}
+	
+	public List<int[]> indexesCellWithTwoFreeLinks () {
+		return indexesCellsWithTwoFreeLinks;
 	}
 	
 	public Cell[][] getArray() {
@@ -49,8 +73,16 @@ public final class Pattern {
 		StringBuffer buf = new StringBuffer();
 		buf.append(position);
 		buf.append("\n");
-		for (int index = 0; index <keyValue.size(); index++) {
-			buf.append(keyValue.get(index));
+		for (int index = 0; index <indexesCellsWithoutFreeLinks.size(); index++) {
+			buf.append(indexesCellsWithoutFreeLinks.get(index));
+		}
+    	buf.append("\n");
+    	for (int index = 0; index <indexesCellsWithOneFreeLink.size(); index++) {
+			buf.append(indexesCellsWithOneFreeLink.get(index));
+		}
+    	buf.append("\n");
+    	for (int index = 0; index <indexesCellsWithTwoFreeLinks.size(); index++) {
+			buf.append(indexesCellsWithTwoFreeLinks.get(index));
 		}
     	buf.append("\n");
     	for (int indexR = 0; indexR < array.length; indexR++) {

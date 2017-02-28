@@ -14,6 +14,8 @@ public class SimpleCell implements Cell {
     protected String letter;
     protected String firstLink;
     protected String secondLink;
+    protected boolean availibilityFirstLink;
+    protected boolean availibilitySecondLink;
 
     public SimpleCell () {
         letterReg = "[\\u0410-\\u044F\\u0401\\u0451]{1}";
@@ -22,6 +24,8 @@ public class SimpleCell implements Cell {
         letter = "";
         firstLink = "";
         secondLink = "";
+        availibilityFirstLink = true;
+        availibilitySecondLink = true;
     }
 
     @Override
@@ -47,7 +51,27 @@ public class SimpleCell implements Cell {
     public String getFirstLink() {
         return firstLink;
     }
+    
+    @Override
+    public void setAvailableFirstLink(boolean availability) {
+    	this.availibilityFirstLink = availability;
+    }
+    
+    @Override
+    public boolean isAvailableFirstLink() {
+    	return this.availibilityFirstLink;
+    }
 
+    @Override
+    public void setAvailableSecondLink(boolean availability) {
+    	this.availibilitySecondLink = availability;
+    }
+    
+    @Override
+    public boolean isAvailableSecondLink() {
+    	return this.availibilitySecondLink;
+    }
+    
     @Override
     public void setSecondLink(String secondLink) {
         if (Pattern.matches(linkReg, secondLink)) {
@@ -101,7 +125,7 @@ public class SimpleCell implements Cell {
 	}
 
 	@Override
-	public void setLink(String link) {
-		
+	public boolean setLink(String link) {
+		return false;
 	}
 }

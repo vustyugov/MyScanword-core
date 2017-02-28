@@ -65,7 +65,6 @@ public final class Util {
 				|| getCountNeighbourCellsOtherType(scanword, row, column, SimpleCell.class, CommentCell.class, position).size()>0) {
 			if  (neighboureCell.getClass().getName().equals(ActiveCell.class.getName())
 					|| neighboureCell.getClass().getName().equals(SimpleCell.class.getName())) {
-				System.out.println(row+" "+column);
 				cell = new ActiveCell();
 				cell.setLetter(currentCell.getLetter());
 				cell.setFirstLink(currentCell.getFirstLink());
@@ -205,12 +204,41 @@ public final class Util {
 		return flag; 
 	}
 	
-	private static boolean isRightKeyValue (Scanword scanword, int row, int column, Pattern pattern) {
+	private static boolean equalsCellWithOneFreeLinks (Scanword scanword, int row, int column, Pattern pattern) {
 		if ((row+pattern.getArray().length)>scanword.getRow()
 				|| (column+pattern.getArray()[0].length)>scanword.getColumns()) {
 			return false;
 		}
-		if (pattern.getKeyValue().size() == 0) {
+		if (pattern.indexesCellWithOneFreeLinks().size() == 0) {
+			return true;
+		}
+		else {
+			boolean lable = equalsSubArrayToPattern(scanword, row, column, pattern);
+			if (lable) {
+				boolean flag = true;
+				for (int index = 0; index < pattern.indexesCellWithOneFreeLinks().size(); index++) {
+					if (scanword.getArrayElement(row + pattern.indexesCellWithOneFreeLinks().get(index)[0], 
+													column + pattern.indexesCellWithOneFreeLinks().get(index)[1]).getCountFreeLink()==1) {
+						flag &= true;
+					}
+					else {
+						flag = false;
+					}
+				}
+				return flag;
+			}
+			else {
+				return false;
+			}
+		}
+	}
+	
+	private static boolean equalsCellWithoutFreeLink (Scanword scanword, int row, int column, Pattern pattern) {
+		if ((row+pattern.getArray().length)>scanword.getRow()
+				|| (column+pattern.getArray()[0].length)>scanword.getColumns()) {
+			return false;
+		}
+		if (pattern.indexesCellWithoutFreeLinks().size() == 0) {
 			return true;
 		}
 
@@ -218,8 +246,39 @@ public final class Util {
 			boolean lable = equalsSubArrayToPattern(scanword, row, column, pattern);
 			if (lable) {
 				boolean flag = true;				
-				for (int index = 0; index < pattern.getKeyValue().size(); index++) {
-					if (scanword.getArrayElement(row + pattern.getKeyValue().get(index)[0], column + pattern.getKeyValue().get(index)[1]).getCountFreeLink() == 0) {
+				for (int index = 0; index < pattern.indexesCellWithoutFreeLinks().size(); index++) {
+					if (scanword.getArrayElement(row + pattern.indexesCellWithoutFreeLinks().get(index)[0], 
+													column + pattern.indexesCellWithoutFreeLinks().get(index)[1]).getCountFreeLink() == 0) {
+						flag &= true;
+					}
+					else {
+						flag = false;
+					}
+				}
+				return flag;
+			}
+			else {
+				return false;
+			}
+		}
+	}
+	
+	private static boolean equalsCellWithTwoFreeLink (Scanword scanword, int row, int column, Pattern pattern) {
+		if ((row+pattern.getArray().length)>scanword.getRow()
+				|| (column+pattern.getArray()[0].length)>scanword.getColumns()) {
+			return false;
+		}
+		if (pattern.indexesCellWithTwoFreeLinks().size() == 0) {
+			return true;
+		}
+
+		else {
+			boolean lable = equalsSubArrayToPattern(scanword, row, column, pattern);
+			if (lable) {
+				boolean flag = true;				
+				for (int index = 0; index < pattern.indexesCellWithTwoFreeLinks().size(); index++) {
+					if (scanword.getArrayElement(row + pattern.indexesCellWithTwoFreeLinks().get(index)[0], 
+													column + pattern.indexesCellWithTwoFreeLinks().get(index)[1]).getCountFreeLink() == 2) {
 						flag &= true;
 					}
 					else {
@@ -235,14 +294,16 @@ public final class Util {
 	}
 	
 	public static boolean createArrawsInActiveAndCommentCells (Scanword scanword, Pattern pattern) {
-		if (getCountFreeLinksInOneTypeCells(scanword, ActiveCell.class)==0) {
+/*		if (getCountFreeLinksInOneTypeCells(scanword, ActiveCell.class)==0) {
 			System.out.println("Can't create, because ActiveCells does not exists.");
 			return false;
 		}
 		else {
 			for (int row = 0; row < scanword.getRow(); row++) {
 				for (int column = 0; column < scanword.getColumns(); column++) {
-					if (isRightKeyValue(scanword, row, column, pattern)) {
+					if (equalsCellWithoutFreeLink(scanword, row, column, pattern)
+							&& equalsCellWithOneFreeLinks(scanword, row, column, pattern)
+							&& equalsCellWithTwoFreeLink(scanword, row, column, pattern)) {
 						if (pattern.getPosition() == Pattern.Position.CENTRAL
 								&& row > 0 && row <= scanword.getRow()-pattern.getArray().length
 								&& column > 0 && column <= scanword.getColumns()-pattern.getArray()[0].length) {
@@ -292,6 +353,113 @@ public final class Util {
 			}
 			return true;
 		}
+*/
+		initialStep(scanword);
+	return true;
+	}
+	
+	private static void initialStep(Scanword scanword) {
+		setLinks(scanword, 0, scanword.getRow()-1, 0, scanword.getColumns(), 1, 0, ActiveCell.class, 2, "7.3", 0, 0, CommentCell.class, 0, "3.3.3");
+		setLinks(scanword, 0, scanword.getRow(), 0, scanword.getColumns()-1, 0, 1, ActiveCell.class, 1, "5.1", 0, 0, CommentCell.class, 0, "1.1.1");
+		setLinks(scanword, 0, scanword.getRow()-1, 0, 1, 1, 0, ActiveCell.class, 1, "7.1", 0, 0, CommentCell.class, 0, "3.3.1");
+		setLinks(scanword, 0, scanword.getRow()-1, 0, 1, 0, 0, ActiveCell.class, 1, "3.1", 1, 0, CommentCell.class, 0, "7.7.1");
+		setLinks(scanword, 0, scanword.getRow()-1, 0, 1, 1, 0, ActiveCell.class, 1, "8.1", 0, 1, CommentCell.class, 0, "5.4.1");
+		setLinks(scanword, 0, scanword.getRow()-1, 0, 1, 0, 0, ActiveCell.class, 1, "2.1", 1, 1, CommentCell.class, 0, "5.6.1");
+		setLinks(scanword, 0, 1, 0, scanword.getColumns()-1, 0, 1, ActiveCell.class, 2, "5.3", 0, 0, CommentCell.class, 0, "1.1.3");
+		setLinks(scanword, 0, 1, 0, scanword.getColumns()-1, 0, 0, ActiveCell.class, 2, "1.3", 0, 1, CommentCell.class, 0, "5.5.3");
+		setLinks(scanword, 0, 1, 0, scanword.getColumns()-1, 0, 1, ActiveCell.class, 2, "4.3", 1, 0, CommentCell.class, 0, "7.8.3");
+		setLinks(scanword, 0, 1, 0, scanword.getColumns()-1, 0, 0, ActiveCell.class, 2, "2.3", 1, 1, CommentCell.class, 0, "7.6.3");
+		
+		setAvailableCells(scanword, 1, scanword.getRow()-1, 1, scanword.getColumns()-1, "central");
+		setAvailableCells(scanword, 1, scanword.getRow()-1, scanword.getColumns()-1, scanword.getColumns(), "right");
+		setAvailableCells(scanword, scanword.getRow()-1, scanword.getRow(), 1, scanword.getColumns()-1, "bottom");
+		setAvailableCells(scanword, 1, scanword.getRow()-1, 0, 1, "left");
+		setAvailableCells(scanword, 0, 1, 1, scanword.getColumns()-1, "top");
+		setAvailableCells(scanword, 0, 1, 0, 1, "leftTop");
+		setAvailableCells(scanword, 0, 1, scanword.getColumns()-1, scanword.getColumns(), "rightTop");
+		setAvailableCells(scanword, scanword.getRow()-1, scanword.getRow(), 0, 1, "leftBottom");
+		setAvailableCells(scanword, scanword.getRow()-1, scanword.getRow(), scanword.getColumns()-1, scanword.getColumns(), "rightBottom");
+	}
+	
+	private static void setAvailableCells(Scanword scanword, int startRow, int endRow, int startColumn, int endColumn, String position) {
+		for (int row = startRow; row < endRow;row++) {
+			for (int column = startColumn; column < endColumn; column++) {
+				Cell currentCell = scanword.getArrayElement(row, column);
+				List<Integer[]> neighboureCells = getCountNeighbourCellsOtherType(scanword, row, column, CommentCell.class, ActiveCell.class, position);
+				if (neighboureCells.size() == 1) {
+					Cell cell = scanword.getArrayElement(row+neighboureCells.get(0)[0], column + neighboureCells.get(0)[1]);
+					if( cell.getCountAvailableLink() == 1) {
+						if (!currentCell.getFirstLink().equals("0.0.0")
+								&& !currentCell.getFirstLink().equals("9.9.9")) {
+							currentCell.setAvailableFirstLink(false);
+							currentCell.setSecondLink("9.9.9");
+						}
+						else if (!currentCell.getSecondLink().equals("0.0.0")
+								&& !currentCell.getSecondLink().equals("9.9.9")) {
+							currentCell.setAvailableSecondLink(false);
+							currentCell.setFirstLink("9.9.9");
+						}
+					cell.setAvailableFirstLink(false);
+					cell.setAvailableSecondLink(false);
+					}
+				}
+			}
+		}
+	}
+	
+ 	private static void setLinks(Scanword scanword, int startRow, int endRow, 
+			int startColumn, int endColumn, int startPositionFirstCellRow, 
+			int startPositionFirstCellColumn, Class<? extends Cell> firstCellType,
+			int firstIndexDirection, String firstCellPattern,
+			int startPositionSecondCellRow, int startPositionSecondCellColumn, 
+			Class<? extends Cell> secondCellType, int secondIndexDirection,
+			String secondCellPattern) {
+		for (int row = startRow; row < endRow; row++) {
+			for (int column = startColumn; column < endColumn; column++) {
+				boolean flag = false;
+				Cell fCell = scanword.getArrayElement(row+startPositionFirstCellRow, column+startPositionFirstCellColumn);
+				Cell sCell = scanword.getArrayElement(row+startPositionSecondCellRow, column+ startPositionSecondCellColumn);
+				if (isType(fCell, ActiveCell.class) & isType(sCell, CommentCell.class)
+						&& firstCellPattern.length() == 3 && secondCellPattern.length() == 5) {
+					if (firstCellType.getName().equals(ActiveCell.class.getName())
+							&& secondCellType.getName().equals(CommentCell.class.getName())) {
+						if (firstIndexDirection == 1 && ((ActiveCell)fCell).getHDirection()) {
+							flag = true;
+						}
+						if (firstIndexDirection == 2 && ((ActiveCell)fCell).getVDirection()) {
+							flag = true;
+						}
+					}
+				}
+				else if (isType(fCell, CommentCell.class) & isType(sCell, ActiveCell.class)
+						&& firstCellPattern.length() == 5 && secondCellPattern.length() == 3) {
+					if (firstCellType.getName().equals(CommentCell.class.getName()) 
+							&& secondCellType.getName().equals(ActiveCell.class.getName())) {
+						if (secondIndexDirection == 1 && ((ActiveCell)sCell).getHDirection()) {
+							flag = true;
+						}
+						if (secondIndexDirection == 2 && ((ActiveCell)sCell).getVDirection()) {
+							flag = true;
+						}
+					}
+				}
+				if (flag) {
+					if (fCell.setLink(firstCellPattern)
+							&&sCell.setLink(secondCellPattern)) {
+						
+					}
+				}
+			}
+		}
+	}
+	
+	private static boolean isType(Cell cell, Class<? extends Cell> type) {
+		if (cell.getClass().getName().equals(type.getName())) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 	
 	private static void setSubArray(Scanword scanword, Pattern pattern, int row, int column) {
@@ -319,82 +487,6 @@ public final class Util {
 	}
 
 	public static void changeLinkFromFreeToBusyValue(Scanword scanword) {
-		for (int row = 0; row < scanword.getRow(); row++) {
-			for (int column = 0; column < scanword.getColumns(); column++) {
-				Cell cell = scanword.getArrayElement(row, column);
-				String position = "";
-				if (row == 0 && column == 0) {
-					position = "leftTop";
-				}
-				else if (row == 0 && column == scanword.getColumns()-1) {
-					position = "rightTop";
-				}
-				else if (row == scanword.getRow()-1 && column == 0 ) {
-					position = "leftBottom";
-				}
-				else if (row == scanword.getRow()-1 && column == scanword.getColumns()-1) {
-					position = "rightBOttom";
-				}
-				else if (row ==0 && column >0 && column < scanword.getColumns()-1) {
-					position = "top";
-				}
-				else if (row == scanword.getRow()-1 && column > 0 && column < scanword.getColumns()-1) {
-					position = "bottom";
-				}
-				else if (row > 0 && row < scanword.getRow()-1 && column == 0) {
-					position = "left";
-				}
-				else if (row > 0 && row < scanword.getRow()-1 && column == scanword.getColumns()-1) {
-					position = "right";
-				}
-				else {
-					position = "central";
-				}
-				if (cell instanceof ActiveCell & cell.getCountFreeLink()==1) {
-					List<Integer[]> cells = getCountNeighbourCellsOtherType(scanword, row, column, ActiveCell.class, CommentCell.class, position);
-					if (cells.size()>0) {
-						boolean lable = true;
-						for (int index = 0; index< cells.size(); index++) {
-							if (scanword.getArrayElement(row + cells.get(index)[0], column+ cells.get(index)[1]).getCountFreeLink() == 0) {
-								lable &= true;
-							}
-							else {
-								lable = false;
-							}
-						}
-						if (lable) {
-							if (cell.getFirstLink().equals("0.0")) {
-								cell.setFirstLink("9.9");
-							}
-							if (cell.getSecondLink().equals("0.0")) {
-								cell.setSecondLink("9.9");
-							}
-						}
-					}
-				}
-				if (cell instanceof CommentCell & cell.getCountFreeLink()>0) {
-					List<Integer[]> cells = getCountNeighbourCellsOtherType(scanword, row, column, CommentCell.class, ActiveCell.class, position);
-					if (cells.size()>0) {
-						boolean lable = true;
-						for (int index = 0; index < cells.size(); index++) {
-							if (scanword.getArrayElement(row + cells.get(index)[0], column + cells.get(index)[1]).getCountFreeLink() == 0) {
-								lable &= true;
-							}
-							else {
-								lable = false;
-							}
-						}
-						if (lable) {
-							if (cell.getFirstLink().equals("0.0.0")) {
-								cell.setFirstLink("9.9.9");
-							}
-							if (cell.getSecondLink().equals("0.0.0")) {
-								cell.setSecondLink("9.9.9");
-							}
-						}
-					}
-				}
-			}
-		}
+		
 	}
 }

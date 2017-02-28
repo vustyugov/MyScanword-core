@@ -6,11 +6,15 @@ package sample.interfaces;
 public interface Cell {
     void setLetter (String letter);
     String getLetter ();
-    void setLink(String link);
+    boolean setLink(String link);
     void setFirstLink (String firstLink);
     String getFirstLink ();
     void setSecondLink (String secondLink);
     String getSecondLink ();
     int getCountAvailableLink();
     int getCountFreeLink();
+    void setAvailableFirstLink(boolean available);
+    boolean isAvailableFirstLink();
+    void setAvailableSecondLink(boolean available);
+    boolean isAvailableSecondLink();
 }

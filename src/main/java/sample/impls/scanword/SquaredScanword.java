@@ -91,6 +91,10 @@ public class SquaredScanword implements Scanword {
     	StringBuffer buf = new StringBuffer();
     	buf.append(name);
     	buf.append("\n");
+    	buf.append(array.length);
+    	buf.append(" ");
+    	buf.append(array[0].length);
+    	buf.append("\n");
     	for (int indexR = 0; indexR < array.length; indexR++) {
     		for (int indexC = 0; indexC < array[0].length; indexC++) {
     			buf.append(String.format("%-24s", array[indexR][indexC]));
