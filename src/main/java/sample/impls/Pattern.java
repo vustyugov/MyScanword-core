@@ -52,15 +52,15 @@ public final class Pattern {
 		return position;
 	}
 	
-	public List<int[]> indexesCellWithoutFreeLinks () {
+	public List<int[]> getIndexesCellWithoutFreeLinks () {
 		return indexesCellsWithoutFreeLinks;
 	}
 	
-	public List<int[]> indexesCellWithOneFreeLinks () {
+	public List<int[]> getIndexesCellWithOneFreeLinks () {
 		return indexesCellsWithOneFreeLink;
 	}
 	
-	public List<int[]> indexesCellWithTwoFreeLinks () {
+	public List<int[]> getIndexesCellWithTwoFreeLinks () {
 		return indexesCellsWithTwoFreeLinks;
 	}
 	

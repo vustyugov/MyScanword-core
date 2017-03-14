@@ -20,6 +20,8 @@ public class ActiveCell extends SimpleCell {
         vDirection = false;
         hWordLink = "";
         vWordLink = "";
+        availibilityFirstLink = true;
+        availibilitySecondLink = true;
     }
 
     @Override
@@ -72,7 +74,9 @@ public class ActiveCell extends SimpleCell {
     			|| !hDirection && vDirection) {
     		return 1;
     	}
-   		return 0;
+    	else {
+    		return 0;
+    	}
     }
     
     @Override
@@ -119,6 +123,32 @@ public class ActiveCell extends SimpleCell {
     	return vWordLink;
     }
 
+    @Override
+    public int hashCode() {
+    	int result = (type + letter + firstLink + secondLink + hWordLink + vWordLink).hashCode();
+    	result = 31 * result + (hDirection?1:0);
+    	result = 31 * result + (vDirection?1:0);
+    	return result;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+    	if (obj == null) {
+    		return false;
+    	}
+    	if (this.getClass() != obj.getClass()) {
+    		return false;
+    	}
+    	if (this.firstLink.equals(((ActiveCell)obj).firstLink)
+    			&& this.secondLink.equals(((ActiveCell)obj).secondLink)
+    			&& this.letter.equals(((ActiveCell)obj).letter)
+    			&& this.type.equals(((ActiveCell)obj).type)
+    			&& this.hDirection == (((ActiveCell)obj).hDirection)
+    			&& this.vDirection == (((ActiveCell)obj).vDirection)) {
+    		return true;
+    	}
+    	return false;
+    }
     
     @Override
     public String toString() {

@@ -41,6 +41,11 @@ public class SimpleCell implements Cell {
     }
 
     @Override
+    public String getType() {
+    	return type;
+    }
+    
+    @Override
     public void setFirstLink(String firstLink) {
         if (Pattern.matches(linkReg, firstLink)) {
             this.firstLink = firstLink;
@@ -127,5 +132,27 @@ public class SimpleCell implements Cell {
 	@Override
 	public boolean setLink(String link) {
 		return false;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return false;
+    	}
+    	if (this.getClass() != obj.getClass()) {
+    		return false;
+    	}
+    	if (firstLink.equals(((CommentCell)obj).firstLink)
+    			&& secondLink.equals(((CommentCell)obj).secondLink)
+    			&& letter.equals(((CommentCell)obj).letter)
+    			&& type.equals(((CommentCell)obj).type)) {
+    		return true;
+    	}
+    	return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return (type + letter + firstLink + secondLink).hashCode();
 	}
 }

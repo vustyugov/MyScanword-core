@@ -57,7 +57,18 @@ public class CommentCell extends SimpleCell {
     
     @Override
     public int getCountAvailableLink() {
-    	return 2;
+    	if (firstLink.equals("9.9.9") && secondLink.equals("9.9.9")) {
+    		return 0;
+    	}
+    	else if (firstLink.equals("9.9.9") && !secondLink.equals("9.9.9")) {
+    		return 1;
+    	}
+    	else if (!firstLink.equals("9.9.9") && secondLink.equals("9.9.9")) {
+    		return 1;
+    	}
+    	else {
+    		return 2;
+    	}
     }
     
     @Override
@@ -70,6 +81,28 @@ public class CommentCell extends SimpleCell {
     		return 1;
     	}
     	return 0;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+    	if (obj == null) {
+    		return false;
+    	}
+    	if (this.getClass() != obj.getClass()) {
+    		return false;
+    	}
+    	if (this.firstLink.equals(((CommentCell)obj).firstLink)
+    			&& this.secondLink.equals(((CommentCell)obj).secondLink)
+    			&& this.letter.equals(((CommentCell)obj).letter)
+    			&& this.type.equals(((CommentCell)obj).type)) {
+    		return true;
+    	}
+    	return false;
+    }
+    
+    @Override
+    public int hashCode() {
+    	return (type + letter + firstLink + secondLink).hashCode();
     }
 
     @Override
