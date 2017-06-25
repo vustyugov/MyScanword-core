@@ -58,43 +58,15 @@ public class BinaryTree <T extends Cell> {
 			root.setFourth(null);
 		}
 		else if (this.find(root, childNode)) {
-			return ;
 		}
 
 		else {
 			Node<Cell> focusNode = rootNode;
 			if (!focusNode.getCell().getClass().getName()
 					.equals(childNode.getCell().getClass().getName())) {
-				if (focusNode.getCountFreeLinks() > 0) {
-					focusNode.setLink(childNode);
-				}
+				focusNode.setLink(childNode);
 			}
 		}
-	}
-
-	public boolean remove (Node<Cell> root, Cell cell) {
-		boolean lable = false;
-		if (root != null) {
-			if (root.getCell().equals(cell)) {
-				root = null;
-				lable = true;
-			}
-			else {
-				if (root.getFirst()!= null) {
-					lable = remove(root.getFirst(), cell);
-				}
-				if (root.getSecond()!= null) {
-					lable = remove(root.getSecond(), cell);
-				}
-				if (root.getThird()!= null) {
-					lable = remove(root.getThird(), cell);
-				}
-				if (root.getFourth()!= null) {
-					lable = remove(root.getFourth(), cell);
-				}
-			}
-		}
-		return lable;
 	}
 	
 	public int getCountLeaves(Node<Cell> node) {
@@ -168,6 +140,5 @@ public class BinaryTree <T extends Cell> {
 		}
 		return list;
 	}
-	
 
 }

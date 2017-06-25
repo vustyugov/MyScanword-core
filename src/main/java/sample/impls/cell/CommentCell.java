@@ -6,7 +6,7 @@ package sample.impls.cell;
 public class CommentCell extends SimpleCell {
 
     public CommentCell() {
-        linkReg = "[0-9]{1}.[0-9]{1}.[0,1,3,9]{1}";
+        linkReg = "[0-9]{1}.[0-9]{1}.[0,1,3,9]{1}(.[1,2]){0,1}";
         letterReg = "";
         super.type = "CC";
         super.letter = "";
