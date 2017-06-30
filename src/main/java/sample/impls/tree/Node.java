@@ -1,30 +1,38 @@
 package sample.impls.tree;
 
-public class Node <T> {
-	private T cell;
+public class Node {
+	private String linkValue;
+	private String link;
 	private boolean finishedNode;
 	private int indexRow;
 	private int indexColumn;
-	private Node<T> linkFirst;
-	private Node<T> linkSecond;
-	private Node<T> linkThird;
-	private Node<T> linkFourth;
+	private Node linkFirst;
+	private Node linkSecond;
+	private Node linkThird;
+	private Node linkFourth;
 
 	public Node () {
 		
 	}
 	
-	public Node (T node, int rowIndex, int columnIndex) {
-		this.cell = node;
+	public Node (String linkValue, String link, int rowIndex, int columnIndex) {
+		this.linkValue = linkValue;
+		this.link = link;
 		this.indexRow = rowIndex;
 		this.indexColumn = columnIndex;
 	}
 	
-	public void setCell(T cell) {
-		this.cell = cell;
+	public void setLinkValue(String linkValue) {
+		this.linkValue = linkValue;
 	}
-	public T getCell() {
-		return this.cell;
+	public String getLinkValue() {
+		return this.linkValue;
+	}
+	public void setLink(String link) {
+		this.link = link;
+	}
+	public String getLink() {
+		return link;
 	}
 	public void setRowIndex(int value) {
 		this.indexRow = value;
@@ -38,28 +46,28 @@ public class Node <T> {
 	public int getColumnIndex() {
 		return this.indexColumn;
 	}
-	public void setFirst(Node<T> first) {
+	public void setFirst(Node first) {
 		this.linkFirst = first;
 	}
-	public Node<T> getFirst() {
+	public Node getFirst() {
 		return this.linkFirst;
 	}
-	public void setSecond(Node<T> second) {
+	public void setSecond(Node second) {
 		this.linkSecond = second;
 	}
-	public Node<T> getSecond() {
+	public Node getSecond() {
 		return this.linkSecond;
 	}
-	public void setThird(Node<T> third) {
+	public void setThird(Node third) {
 		this.linkThird = third;
 	}
-	public Node<T> getThird() {
+	public Node getThird() {
 		return this.linkThird;
 	}
-	public void setFourth(Node<T> fourth) {
+	public void setFourth(Node fourth) {
 		this.linkFourth = fourth;
 	}
-	public Node<T> getFourth() {
+	public Node getFourth() {
 		return this.linkFourth;
 	}
 	
@@ -80,7 +88,7 @@ public class Node <T> {
 		return count;
 	}
 	
-	public void setLink(Node<T> link) {
+	public void setLink(Node link) {
 		if (linkFirst == null) {
 			linkFirst = link;
 			return ;
@@ -128,7 +136,8 @@ public class Node <T> {
 			if (obj instanceof Node) {
 				if (this.indexColumn == ((Node) obj).indexColumn 
 						&& this.indexRow == ((Node)obj).indexRow
-						&& cell.equals(((Node) obj).getCell())) {
+						&& linkValue.equals(((Node) obj).getLinkValue())
+						&& link.equals(((Node)obj).getLink())) {
 					return true;
 				}
 			}

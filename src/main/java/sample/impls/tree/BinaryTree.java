@@ -2,23 +2,48 @@ package sample.impls.tree;
 
 import java.util.*;
 
-import sample.interfaces.Cell;
-
-public class BinaryTree <T extends Cell> {
-	Node<Cell> root;
+public class BinaryTree {
+	Node root;
 	
 	public BinaryTree() {
 		root = null;
 	}
 	
-	public Node<Cell> getRootNode() {
+	public Node getRootNode() {
 		return root;
 	}
 	
-	public boolean find (Node<Cell> root, Node<Cell> node) {
+	public boolean isParent(Node parent, Node child) {
+		if (this.root == null) {
+			if (parent== null) {
+				return true;
+			}
+		}
+		else if (this.root.equals(parent)){
+			return true;
+		}
+		else {
+			if (parent.getFirst() != null && parent.getFirst().equals(child)) {
+				return true;
+			}
+			else if (parent.getSecond() != null && parent.getSecond().equals(child)) {
+				return true;
+			}
+			else if (parent.getThird() != null && parent.getThird().equals(child)) {
+				return true;
+			}
+			else if (parent.getFourth() != null && parent.getFourth().equals(child)) {
+				return true;
+			}
+		}
+		return false;
+	}
+		
+	public boolean find (Node root, Node node) {
 		if (root.getRowIndex() == node.getRowIndex()
 				&& root.getColumnIndex() == node.getColumnIndex()
-				&&root.getCell().equals(node.getCell())) {
+				&& root.getLinkValue().equals(node.getLinkValue())
+				&& root.getLink().equals(node.getLink())) {
 			return true;
 		}
 		if (root.getFirst() != null) {
@@ -44,7 +69,7 @@ public class BinaryTree <T extends Cell> {
 		return false;
 	}
 	
-	public void insert (Node<Cell> rootNode, Node<Cell> childNode) {
+	public void insert (Node rootNode, Node childNode) {
 		if (root == null) {
 			if (rootNode == null) {
 				root = childNode;
@@ -57,19 +82,16 @@ public class BinaryTree <T extends Cell> {
 			root.setThird(null);
 			root.setFourth(null);
 		}
-		else if (this.find(root, childNode)) {
-		}
 
 		else {
-			Node<Cell> focusNode = rootNode;
-			if (!focusNode.getCell().getClass().getName()
-					.equals(childNode.getCell().getClass().getName())) {
+			Node focusNode = rootNode;
+			if (!focusNode.equals(childNode)) {
 				focusNode.setLink(childNode);
 			}
 		}
 	}
 	
-	public int getCountLeaves(Node<Cell> node) {
+	public int getCountLeaves(Node node) {
 		if (node == null) {
 			return 0;
 		}
@@ -84,12 +106,12 @@ public class BinaryTree <T extends Cell> {
 		}
 	}
 
-	public Node<Cell>[] getLeavesTree(Node<Cell> node, Node<Cell>[] cells, int length) {
+	public Node[] getLeavesTree(Node node, Node[] cells, int length) {
 		if (node == null) {
 			return null;
 		}
 		if (node.isLeaf()) {
-			Node<Cell>[] tmp = new Node[cells.length];
+			Node[] tmp = new Node[cells.length];
 			tmp = cells.clone();
 			cells = new Node[++length];
 			System.arraycopy(tmp, 0, cells, 0, tmp.length);
@@ -116,12 +138,12 @@ public class BinaryTree <T extends Cell> {
 		return cells;
 	}
 	
-	public List<List<Object[]>> getListBranchesTree(Node<Cell> node, List<List<Object[]>> list, List<Object[]> cells) {
+	public List<List<Object[]>> getListBranchesTree(Node node, List<List<Object[]>> list, List<Object[]> cells) {
 		if (node != null) {
 			List<Object[]> tmp = new ArrayList<Object[]>(cells);
 			cells = new ArrayList<Object[]> (tmp.size()+1);
 			cells.addAll(tmp);
-			Object[] objs = {node.getRowIndex(), node.getColumnIndex(), node.getCell()};
+			Object[] objs = {node.getRowIndex(), node.getColumnIndex(), node.getLinkValue(), node.getLink(), node.isFinishedNode()};
 			cells.add(cells.size(), objs);
 		
 			if (node.isFinishedNode()) {
@@ -135,10 +157,6 @@ public class BinaryTree <T extends Cell> {
 				getListBranchesTree(node.getFourth(), list, new ArrayList<Object[]> (cells));
 			}
 		}
-		else {
-			list.add(cells);
-		}
 		return list;
 	}
-
 }

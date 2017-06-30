@@ -8,7 +8,7 @@ import java.util.Date;
 public interface Scanword {
 
     String getName ();
-    int getRow ();
+    int getRows ();
     int getColumns();
     void setArray (Cell[][] array);
     Cell[][] getArray ();

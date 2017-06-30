@@ -55,8 +55,9 @@ public final class Util {
 		}
 		
 		public static boolean isLinkBetweenTwoCells(Cell fCell, int fDirectionIndex, Cell sCell, int sDirectionIndex) {
-			return (containsDirectionIndexInLinkCell(fCell, fDirectionIndex, 1) || containsDirectionIndexInLinkCell(fCell, fDirectionIndex, 2))
-					&& (containsDirectionIndexInLinkCell(sCell, sDirectionIndex, 1) || containsDirectionIndexInLinkCell(sCell, sDirectionIndex, 2)) ;
+			boolean isDirectionIndexInFirstCell = containsDirectionIndexInLinkCell(fCell, fDirectionIndex, 1) || containsDirectionIndexInLinkCell(fCell, fDirectionIndex, 2);
+			boolean isDirectionIndexInSecondCell = containsDirectionIndexInLinkCell(sCell, sDirectionIndex, 1) || containsDirectionIndexInLinkCell(sCell, sDirectionIndex, 2);
+			return isDirectionIndexInFirstCell && isDirectionIndexInSecondCell;
 		}
 		
 	 	public static void breakLinkBetweenTwoCells(Cell fCell, int fDirectionIndex, Cell sCell, int sDirectionIndex) {
@@ -219,7 +220,11 @@ public final class Util {
 			}
 		}
 		
-		private static int transformateDiffCoordinateToDirectionIndex(int dRow, int dColumn) {
+		private static int oppositeDirectionIndex(int directionIndex) {
+			return (directionIndex + 4) - 8*(directionIndex/5);
+		}
+		
+		public static int transformateDiffCoordinateToDirectionIndex(int dRow, int dColumn) {
 			if (dRow == 0 && dColumn == 1) {
 	 			return 1;
 	 		}
@@ -290,7 +295,7 @@ public final class Util {
 			int cCount = 0;
 			int aCount = 0;
 			int[] count = new int[2];
-			for (int row = 0; row < scanword.getRow(); row++) {
+			for (int row = 0; row < scanword.getRows(); row++) {
 				for (int column = 0; column < scanword.getColumns(); column++) {
 					Cell cell = scanword.getArrayElement(row, column);
 					if (cell instanceof ActiveCell && cell.getCountFreeLink() > 0) {
@@ -413,67 +418,87 @@ public final class Util {
 			defineToDownArrow(array, 0, -1, 0, -1, 1, 1, "2.3", "6.6.3");//up-left-down
 			defineToDownArrow(array, 0, -1, 1, 0, 1, -1, "4.3", "8.8.3");//up-right-down
 			
-			defineToRightArrow(array, 0, -1, 0, 0, 1, 0, "7.1", "3.3.1");//down-right
-			defineToRightArrow(array, 1, 0, 0, 0, -1, 0, "3.1", "7.7.1");//up-right
+			defineToRightArrow(array, 0, -1, 0, 0, 1, 0, "3.1", "7.7.1");//down-right
+			defineToRightArrow(array, 1, 0, 0, 0, -1, 0, "7.1", "3.3.1");//up-right
 			defineToRightArrow(array, 0, -1, 0, -1, 1, 1, "2.1", "6.6.1");//left-up-right
 			defineToRightArrow(array, 1, 0, 0, -1, -1, 1, "8.1", "4.4.1");//left-down-right
 		}
 		
-		private static BinaryTree<Cell> getTree(Scanword scanword, int startRow, int startColumn, int level) {
-			BinaryTree<Cell> tree = new BinaryTree<Cell>();
-			List<Cell> list = new LinkedList<Cell>();
+		private static BinaryTree getTree(Scanword scanword, int startRow, int startColumn, int level) {
+			BinaryTree tree = new BinaryTree();
 			Cell startCell = scanword.getArrayElement(startRow, startColumn);
 			if (startCell instanceof CommentCell && startCell.getCountFreeLink() == 2) {
-				list.add(startCell);
 				Cell cCell = startCell;
-				Node<Cell> rootNode = new Node<Cell> (cCell, startRow, startColumn);
+				Node rootNode = new Node ("0.0.0","first" , startRow, startColumn);
 				tree.insert(null, rootNode);
 			
-				Node<Cell>[] nodes = tree.getLeavesTree(rootNode, new Node[0], 0);
+				Node[] nodes = tree.getLeavesTree(rootNode, new Node[0], 0);
 				int counter = 0;
 				boolean flag = false;
-				while (!flag && nodes.length !=0 && counter < level) {
-					for (Node<Cell> node:nodes) {
+				while (!flag && nodes.length != 0 && counter < 2*level) {
+					for (Node node:nodes) {
+						Cell cell = null;
 						if (node == null) {
 							continue;
 						}
-						if ((node.getCell() instanceof CommentCell) 
-								&& node.getCell().getCountAvailableLink() == 2 
-								&& node.getCell().getCountFreeLink() == 0) {
-							flag = true;
-							break;
-						}
-						if ((node.getCell() instanceof ActiveCell)
-								&& node.getCell().getCountFreeLink() > 0) {
-							flag = true;
-							break;
-						}
-						List<Integer> indexes = null;
-						if (node.getCell() instanceof CommentCell) {
-							 indexes = LinkUtils.getCountNeighbourCellsOtherType(scanword.getArray(), node.getRowIndex(), node.getColumnIndex(), CommentCell.class, ActiveCell.class);
-						}
-						else if (node.getCell() instanceof ActiveCell) {
-							indexes = LinkUtils.getCountNeighbourCellsOtherType(scanword.getArray(), node.getRowIndex(), node.getColumnIndex(), ActiveCell.class, CommentCell.class);
-						}
-						for (int index = 0 ; index < indexes.size(); index++) {
-							int[] positionNeighboureCell = LinkUtils.transformateDirectionIndexToDiffCoordinateCell(indexes.get(index));
-							Cell newCell = scanword.getArrayElement(node.getRowIndex()+positionNeighboureCell[0], node.getColumnIndex()+positionNeighboureCell[1]);
-							if (newCell instanceof ActiveCell 
-									&& (newCell.isAvailableFirstLink() 
-									|| newCell.isAvailableSecondLink())) {
-									tree.insert(node, new Node<Cell> (newCell, 
-											node.getRowIndex()+positionNeighboureCell[0], 
-											node.getColumnIndex()+positionNeighboureCell[1]));
+						else {
+							cell = scanword.getArrayElement(node.getRowIndex(), node.getColumnIndex());
+							if (cell instanceof CommentCell
+									&& cell.getCountAvailableLink() == 2
+									&& cell.getCountFreeLink() == 0) {
+								flag = true;
+								break;
 							}
-							if (newCell instanceof CommentCell) {
-								if (LinkUtil.isLinkBetweenTwoCells(node.getCell(), LinkUtils.transformateDiffCoordinateToDirectionIndex(node.getRowIndex(), node.getColumnIndex()), 
-										newCell, LinkUtils.transformateDiffCoordinateToDirectionIndex(node.getRowIndex()+positionNeighboureCell[0], 
-											node.getColumnIndex()+positionNeighboureCell[1]))) {
-									Node<Cell> newNode = new Node<Cell> (newCell, node.getRowIndex()+positionNeighboureCell[0], node.getColumnIndex()+positionNeighboureCell[1]);
-									if (newCell.getCountAvailableLink()==2 && newCell.getCountFreeLink()==0) {
+							if (cell instanceof ActiveCell
+									&& cell.getCountFreeLink() > 0) {
+								flag = true;
+								break;
+							}
+							List<Integer> indexes = null;
+							if (cell instanceof CommentCell) {
+								 indexes = LinkUtils.getCountNeighbourCellsOtherType(scanword.getArray(), node.getRowIndex(), node.getColumnIndex(), CommentCell.class, ActiveCell.class);
+							}
+							else if (cell instanceof ActiveCell) {
+								indexes = LinkUtils.getCountNeighbourCellsOtherType(scanword.getArray(), node.getRowIndex(), node.getColumnIndex(), ActiveCell.class, CommentCell.class);
+							}
+							for (int index = 0 ; index < indexes.size(); index++) {
+								int[] positionNeighboureCell = LinkUtils.transformateDirectionIndexToDiffCoordinateCell(indexes.get(index));
+								Cell newCell = scanword.getArrayElement(node.getRowIndex()+positionNeighboureCell[0], node.getColumnIndex()+positionNeighboureCell[1]);
+								if (!(newCell.getFirstLink().equals("9.9.9")
+										|| newCell.getFirstLink().equals("9.9"))) { 
+									Node newNode = new Node(newCell.getFirstLink(), "first", 
+											node.getRowIndex()+positionNeighboureCell[0], 
+											node.getColumnIndex()+positionNeighboureCell[1]);
+									if (newCell instanceof CommentCell 
+											& newCell.getCountAvailableLink() == 2 
+											& newCell.getCountFreeLink() == 0) {
 										newNode.setFinishedNode(true);
 									}
-									tree.insert(node, newNode);
+									if (newCell instanceof ActiveCell
+											& newNode.getLinkValue().equals("0.0")) {
+										newNode.setFinishedNode(true);
+									}
+									if (/*!tree.find(rootNode, newNode) &&*/ isLinkBetweenTwoNodes(node, newNode, scanword)) {
+										tree.insert(node, newNode);
+									}
+								}
+								if (!(newCell.getSecondLink().equals("9.9.9")
+										|| newCell.getSecondLink().equals("9.9"))) {
+									Node newNode = new Node(newCell.getSecondLink(), "second", 
+											node.getRowIndex()+positionNeighboureCell[0], 
+											node.getColumnIndex()+positionNeighboureCell[1]);
+									if (newCell instanceof CommentCell
+											& newCell.getCountAvailableLink() == 2 
+											& newCell.getCountFreeLink() == 0) {
+										newNode.setFinishedNode(true);
+									}
+									if (newCell instanceof ActiveCell
+											& newNode.getLinkValue().equals("0.0")) {
+										newNode.setFinishedNode(true);
+									}
+									if (/*!tree.find(rootNode, newNode) &&*/ isLinkBetweenTwoNodes(node, newNode, scanword)) {
+										tree.insert(node, newNode);
+									}
 								}
 							}
 						}
@@ -485,113 +510,199 @@ public final class Util {
 			return tree;
 		}
 		
+		private static boolean isLinkBetweenTwoNodes(Node parentNode, Node childNode, Scanword scanword) {
+			Cell fCell = scanword.getArrayElement(parentNode.getRowIndex(), parentNode.getColumnIndex());
+			Cell sCell = scanword.getArrayElement(childNode.getRowIndex(), childNode.getColumnIndex());
+			if (fCell instanceof CommentCell && sCell instanceof ActiveCell) {
+				return true;
+			}
+			int fDirectionIndex = LinkUtils.transformateDiffCoordinateToDirectionIndex(childNode.getRowIndex() - parentNode.getRowIndex(), 
+																		childNode.getColumnIndex() - parentNode.getColumnIndex());
+			int sDirectionIndex = LinkUtils.oppositeDirectionIndex(fDirectionIndex);
+			boolean isLinkBeetwenTwoCells = true;
+			if (fCell instanceof ActiveCell && sCell instanceof CommentCell) {
+				isLinkBeetwenTwoCells = LinkUtil.isLinkBetweenTwoCells(fCell, fDirectionIndex, sCell, sDirectionIndex);
+			}
+			int fDirectionIndexNode = -1;
+			int sDirectionIndexNode = -1;
+			if (parentNode.getLinkValue().length() == 3) {
+				fDirectionIndexNode = Integer.valueOf(parentNode.getLinkValue().substring(0,1));
+			}
+			else if (parentNode.getLinkValue().length() == 5) {
+				fDirectionIndexNode = Integer.valueOf(parentNode.getLinkValue().substring(2, 3));
+			}
+			if (childNode.getLinkValue().length() == 3) {
+				sDirectionIndexNode = Integer.valueOf(childNode.getLinkValue().substring(0,1));
+			}
+			else if (childNode.getLinkValue().length() == 5) {
+				sDirectionIndexNode = Integer.valueOf(childNode.getLinkValue().substring(2,3));
+			}
+			
+			if (isLinkBeetwenTwoCells && fDirectionIndex == fDirectionIndexNode && sDirectionIndex == sDirectionIndexNode) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		
 		private static void removeBadBranches(List<List<Object[]>> list) {
+			if (list == null) { return;}
 			Iterator<List<Object[]>> iterator = list.iterator();
 			while(iterator.hasNext()) {
 				List<Object[]> cells = iterator.next();
 				int length = cells.size();
-				if (cells.get(length-1)[2] instanceof CommentCell 
-						&& ((Cell)cells.get(length-1)[2]).getCountFreeLink() == 0
-						&& ((Cell)cells.get(length-1)[2]).getCountAvailableLink()==2) {
-				}
-				else if (cells.get(length-1)[2] instanceof ActiveCell
-						&& ((Cell)cells.get(length-1)[2]).getCountFreeLink()>0) {
-					
-				}
-				else {
+				if (length == 0) {return ;}
+				if (!(boolean)cells.get(length-1)[4]) { 
 					iterator.remove();
 				}
 			}
 		}
 		
 		private static List<Object[]> selectListLinkedCells(List<List<Object[]>> resultList) {
+			List<List<Object[]>> list = new LinkedList<List<Object[]>>();
+			int length = 0;
 			removeBadBranches(resultList);
 			
-			int countElementsInList = 0;
+			if (resultList.size() == 0 || resultList == null) {
+				return null;
+			}
 			
-			for (List<Object[]> list: resultList) {
-				if (list != null) {
-					countElementsInList++;
+			length = resultList.get(0).size();
+			
+			for (int index = 1; index < resultList.size(); index++) {
+				if (resultList.get(index).size() <= length) {
+					length = resultList.get(index).size();
 				}
 			}
 			
-			List<List<Object[]>> tmp = new ArrayList<List<Object[]>>(countElementsInList);
-			for (int index = 0; index < countElementsInList; index++) {
-				tmp.add(index, resultList.get(index));
+			for (int index = 0; index < resultList.size(); index++) {
+				if (resultList.get(index).size() == length) {
+					list.add(resultList.get(index));
+				}
 			}
-			resultList = tmp;
-				
-			countElementsInList = 0;
 			
-			List<Integer> rList = new ArrayList<Integer>(resultList.size());
-			if (resultList.size() > 1) {
-					for (int index = 0; index < resultList.size(); index++) {
-						for (int iIndex = resultList.get(index).size()-1; iIndex >= 1 ; iIndex-=2) {
-							List<Object[]> obj = resultList.get(index);
-							Object[] fObj = resultList.get(index).get(iIndex);
-							Object[] sObj = resultList.get(index).get(iIndex-1);
-							if (LinkUtil.isLinkBetweenTwoCells(
-									(Cell)fObj[2], LinkUtils.transformateDiffCoordinateToDirectionIndex((int)fObj[0], (int)fObj[1]), 
-									(Cell)sObj[2], LinkUtils.transformateDiffCoordinateToDirectionIndex((int)sObj[0], (int)sObj[1]))) {
-							}
-							else {
-								rList.add(index);
-								break;
-							}
-						}
-					}
-				}
-				for (int index = rList.size()-1; index >= 0; index--) {
-					List<Object[]> obj = resultList.get(rList.get(index));
-					resultList.remove(obj);
-				}
-				
-				int controlIndex = 0;
-				for (int index = 0; index < resultList.size(); index++) {
-					if (resultList.get(index).size() > countElementsInList) {
-						countElementsInList = resultList.get(index).size();
-						controlIndex = index;
-					}
-				}
-				if (resultList.size()!= 0) {
-					return resultList.get(controlIndex);
-				}
-				else {
-					return new ArrayList<Object[]> ();
-				}
+			if (list.size() == 1) {
+				return list.get(0);
 			}
-		
-		public static List<Object[]> getListLinkedCells(Scanword scanword, int startRow, int startColumn, int level) {
-			return ArrowUtils.selectListLinkedCells(ArrowUtils.getTree(scanword, startRow, startColumn, level)
-													.getListBranchesTree(ArrowUtils.getTree(scanword, startRow, startColumn, level).getRootNode(), 
-													new ArrayList<List<Object[]>>(), new ArrayList<Object[]>()));				
+			else {
+				int index = getIndexElementWithMaxWeight(list);
+				return list.get(index);
+			}
 		}
 		
-		public static void redefineCellsLink(List<Object[]> list) {
-			Object[] currentObj = null;
-			Object[] nextObj = null;
-			for (int index = list.size()-1; index >= 1; index-=2) {
-				currentObj = list.get(index);
-				nextObj = list.get(index-1);
-				if (LinkUtil.isLinkBetweenTwoCells((Cell)currentObj[2], LinkUtils.transformateDiffCoordinateToDirectionIndex((int)currentObj[0], (int)currentObj[1]), 
-						(Cell)nextObj[2], LinkUtils.transformateDiffCoordinateToDirectionIndex((int)nextObj[0], (int)nextObj[1]))) {
-					LinkUtil.breakLinkBetweenTwoCells((Cell)currentObj[2], LinkUtils.transformateDiffCoordinateToDirectionIndex((int)currentObj[0], (int)currentObj[1]),
-							(Cell)nextObj[2], LinkUtils.transformateDiffCoordinateToDirectionIndex((int)nextObj[0], (int)nextObj[1]));
+		private static int getWeight (String link) {
+			if (link.equals("2.1") || link.equals("2.3") || link.equals("8.1") || link.equals("4.3")) {
+				return 4;
+			}
+			else if (link.equals("1.3") || link.equals("5.3") || link.equals("3.1") || link.equals("7.1")) {
+				return 3;
+			}
+			else if (link.equals("6.3") || link.equals("6.1") || link.equals("8.3") || link.equals("4.1")) {
+				return 2;
+			}
+			else if (link.equals("5.1") || link.equals("7.3")) {
+				return 1;
+			}
+			else {
+				return 0;
+			}
+		}
+		
+		private static int getIndexWithMaxWeight(List<String> list) {
+			int listIndex = -1;
+			int weight = -1;
+			for (int index = 0; index < list.size(); index++) {
+				String element = list.get(index);
+				if (weight < getWeight(element)) {
+					weight = getWeight(element);
+					listIndex = index;
 				}
 			}
-			for (int index = 0; index < list.size()-1; index+=2) {
+			return listIndex;
+		}
+		
+		private static int getIndexElementWithMaxWeight(List<List<Object[]>> list) {
+			List<String> listLastElements = new LinkedList<String>();
+			int length = 0;
+			if (list.size()%2 == 0) {
+				length = 2;
+			}
+			else {
+				length = 1;
+			}
+			for (int index = 0; index < list.size(); index++) {
+				List<Object[]> element = list.get(index);
+				listLastElements.add(String.valueOf(element.get(element.size()-length)[2]));
+			}
+			return getIndexWithMaxWeight(listLastElements);
+		}
+						
+		public static List<Object[]> getListLinkedCells(Scanword scanword, int startRow, int startColumn, int level) {
+			BinaryTree tree = ArrowUtils.getTree(scanword, startRow, startColumn, level);
+			List<List<Object[]>> list = tree.getListBranchesTree(tree.getRootNode(), new ArrayList<List<Object[]>>(), new ArrayList<Object[]>());
+			return ArrowUtils.selectListLinkedCells(list);				
+		}
+		
+		private static void fillLinkCell(Cell fCell, Cell sCell, String fCellLinkName, String sCellLinkName, int fDirectionIndex, int sDirectionIndex) {
+			StringBuilder fBuf = new StringBuilder();
+			StringBuilder sBuf = new StringBuilder();
+			fBuf.append(sDirectionIndex);
+			fBuf.append(".");
+			fBuf.append(sDirectionIndex);
+			fBuf.append(".");
+			sBuf.append(fDirectionIndex);
+			sBuf.append(".");
+			if (sCellLinkName.equals("first")) {
+				fBuf.append(1);
+				sBuf.append(1);
+				sCell.setFirstLink(sBuf.toString());
+			}
+			else {
+				fBuf.append(3);
+				sBuf.append(3);
+				sCell.setSecondLink(sBuf.toString());
+			}
+			if (fCellLinkName.equals("first")) {
+				fCell.setFirstLink(fBuf.toString());
+			}
+			else {
+				fCell.setSecondLink(fBuf.toString());
+			}
+		}
+		
+		public static void redefineCellsLink(Scanword scanword, List<Object[]> list) {
+			Object[] currentObj = null;
+			Cell currentCell = null;
+			Object[] nextObj = null;
+			Cell nextCell = null;
+			for(int index = 0; index < list.size()-1; index+=2) {
 				currentObj = list.get(index);
+				currentCell = scanword.getArrayElement((Integer)currentObj[0], (Integer)currentObj[1]);
 				nextObj = list.get(index+1);
-				LinkUtil.createLinkBetweenTwoCells((Cell)currentObj[2], LinkUtils.transformateDiffCoordinateToDirectionIndex((int)currentObj[0], (int)currentObj[1]), 
-						(Cell)nextObj[2], LinkUtils.transformateDiffCoordinateToDirectionIndex((int)nextObj[0], (int)nextObj[1]));
-			}	
+				nextCell = scanword.getArrayElement((Integer)nextObj[0],(Integer)nextObj[1]);
+				int directionIndex =  LinkUtils.transformateDiffCoordinateToDirectionIndex((Integer)currentObj[0]-(Integer)nextObj[0], (Integer)currentObj[1] - (Integer)nextObj[1]);
+				int oppositeDirectionIndex = LinkUtils.oppositeDirectionIndex(directionIndex);
+				fillLinkCell(currentCell, nextCell, String.valueOf(currentObj[3]), String.valueOf(nextObj[3]), directionIndex, oppositeDirectionIndex);
+			}
+			
+			if (list.size()%2 == 1) {
+				Object[] lastObj = list.get(list.size()-1);
+				Cell cell = scanword.getArrayElement((Integer)lastObj[0], (Integer)lastObj[1]);
+				if (lastObj[3].equals("first")) {
+					cell.setFirstLink("9.9.9");
+				}
+				else {
+					cell.setSecondLink("9.9.9");
+				}
+			}
 		}
 	}
 	
 	static class ScanwordUtil {
 		
 		private static void changeFilledLinks(Scanword scanword) {
-			for (int row = 0; row < scanword.getRow(); row ++) {
+			for (int row = 0; row < scanword.getRows(); row ++) {
 				for (int column = 0; column < scanword.getColumns(); column++) {
 					Cell cell = scanword.getArrayElement(row, column);
 					if (cell instanceof ActiveCell) {
@@ -729,7 +840,7 @@ public final class Util {
 		}
 				
 		private static void removeAllFreeLinks(Scanword scanword) {
-			for (int row = 0; row < scanword.getRow(); row++) {
+			for (int row = 0; row < scanword.getRows(); row++) {
 				for (int column = 0; column < scanword.getColumns(); column++) {
 					boolean flag = true;
 					Cell cell = scanword.getArrayElement(row, column);
@@ -755,11 +866,11 @@ public final class Util {
 
 		private static void nextStepRedefineArrows(Scanword scanword, int level) {
 			List<Object[]> list = null;
-			for (int row = scanword.getRow()-1; row >= 0; row--) {
+			for (int row = scanword.getRows()-1; row >= 0; row--) {
 				for (int column = scanword.getColumns()-1; column >= 0; column--) {
 					list = ArrowUtils.getListLinkedCells(scanword, row, column, level);
-					if (list != null & list.size() > 0) {
-						ArrowUtils.redefineCellsLink(list);
+					if (list != null && list.size() > 0) {
+						ArrowUtils.redefineCellsLink(scanword, list);
 					}
 				}
 			}
@@ -784,12 +895,17 @@ public final class Util {
 	
 	public static boolean defineArrowsForCommentCells(Scanword scanword) {
 		ArrowUtils.firstStepDefineArrows(scanword.getArray());
+		System.out.println(scanword);
 		ArrowUtils.secondStepDefineArrows(scanword.getArray());
+		System.out.println(scanword);
 		for (int level = 1; level < 20; level++) {
 			ScanwordUtil.nextStepRedefineArrows(scanword, level);
+			System.out.println("level="+level);
+			System.out.println(scanword);
 		}
 		ScanwordUtil.removeAllFreeLinks(scanword);
 		ScanwordUtil.changeFilledLinks(scanword);
+		System.out.println(scanword.toString());
 		return true;
 	}
 			
