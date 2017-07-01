@@ -13,30 +13,12 @@ public class BinaryTree {
 		return root;
 	}
 	
+	public Node getParent(Node child) {
+		return child.getParent();
+	}
+		
 	public boolean isParent(Node parent, Node child) {
-		if (this.root == null) {
-			if (parent== null) {
-				return true;
-			}
-		}
-		else if (this.root.equals(parent)){
-			return true;
-		}
-		else {
-			if (parent.getFirst() != null && parent.getFirst().equals(child)) {
-				return true;
-			}
-			else if (parent.getSecond() != null && parent.getSecond().equals(child)) {
-				return true;
-			}
-			else if (parent.getThird() != null && parent.getThird().equals(child)) {
-				return true;
-			}
-			else if (parent.getFourth() != null && parent.getFourth().equals(child)) {
-				return true;
-			}
-		}
-		return false;
+		return (child.getParent().equals(parent))?true:false;
 	}
 		
 	public boolean find (Node root, Node node) {
@@ -87,8 +69,19 @@ public class BinaryTree {
 			Node focusNode = rootNode;
 			if (!focusNode.equals(childNode)) {
 				focusNode.setLink(childNode);
+				childNode.setParent(focusNode);
 			}
 		}
+	}
+	
+	public int getCountNodes(Node node) {
+		if (node == null) {
+			return 0;
+		}
+		return 1 + getCountNodes(node.getFirst())
+				+ getCountNodes(node.getSecond())
+				+ getCountNodes(node.getThird())
+				+ getCountNodes(node.getFourth());
 	}
 	
 	public int getCountLeaves(Node node) {
@@ -158,5 +151,27 @@ public class BinaryTree {
 			}
 		}
 		return list;
+	}
+	
+	private void removeLeaf(Node node, int treeLevel, int level) {
+		if (node == null) {
+			return;
+		}
+		if (node.isLeaf()) {
+			node = null;
+		}
+		else {
+			treeLevel++;
+			if (level > treeLevel) {
+				removeLeaf(node.getFirst(), treeLevel, level);
+				removeLeaf(node.getSecond(), treeLevel, level);
+				removeLeaf(node.getThird(), treeLevel, level);
+				removeLeaf(node.getFourth(), treeLevel, level);
+			}
+		}
+	}
+	
+	public void removeAllLeavesByLevel(int level) {
+		removeLeaf(root, 0, level);
 	}
 }

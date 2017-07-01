@@ -6,6 +6,7 @@ public class Node {
 	private boolean finishedNode;
 	private int indexRow;
 	private int indexColumn;
+	private Node parent;
 	private Node linkFirst;
 	private Node linkSecond;
 	private Node linkThird;
@@ -45,6 +46,12 @@ public class Node {
 	}
 	public int getColumnIndex() {
 		return this.indexColumn;
+	}
+	public void setParent(Node parent) {
+		this.parent = parent;
+	}
+	public Node getParent() {
+		return this.parent;
 	}
 	public void setFirst(Node first) {
 		this.linkFirst = first;
