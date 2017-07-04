@@ -437,10 +437,28 @@ public final class ArrowUtils {
 			return null;
 		}
 		
-		
 		if (CellUtils.isType(rootCell, ActiveCell.class)) {
+			List<List<Object[]>> innerList = new LinkedList<List<Object[]>> ();
 			for (int index = 0; index < resultList.size(); index++) {
 				List<Object[]> list = resultList.get(index);
+				boolean existLinks = true;
+				for (int innerIndex = 1; innerIndex < list.size()-1; innerIndex += 2) {
+					int fDirectionIndex = Integer.valueOf(((String)list.get(innerIndex)[2]).substring(0, 1));
+					int sDirectionIndex = Integer.valueOf(((String)list.get(innerIndex+1)[2]).substring(0, 1));
+					if (sDirectionIndex == LinkUtils.oppositeDirectionIndex(fDirectionIndex)) {
+						existLinks &= true;
+					}
+					else {
+						existLinks = false;
+						continue;
+					}
+				}
+				if (existLinks) {
+					innerList.add(list);
+				}
+			}
+			for (int index = 0; index < innerList.size(); index++) {
+				List<Object[]> list = innerList.get(index);
 				if(((String)list.get(list.size()-1)[2]).equals("0.0.0")) {
 					return list;
 				}

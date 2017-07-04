@@ -23,8 +23,47 @@ public final class ScanwordUtil {
 						scanword.getArrayElement(row+1, column+1).setFirstLink("7.6.1.1");
 						scanword.getArrayElement(row+1, column+1).setSecondLink("5.6.3.1");
 					}
+					if (cell.getFirstLink().equals("4.1")
+							&& cell.getSecondLink().equals("2.3")) {
+						Cell ldCell = scanword.getArrayElement(row+1, column-1);
+						Cell rdCell = scanword.getArrayElement(row+1, column+1);
+						if (ldCell.getFirstLink().equals("8.8.1")) {
+							ldCell.setFirstLink("1.8.1.1");
+							if (rdCell.getFirstLink().equals("6.6.3")) {
+								rdCell.setFirstLink("7.6.3.2");
+							}
+							else if (rdCell.getSecondLink().equals("6.6.3")) {
+								rdCell.setSecondLink("7.6.3.2");
+							}
+						}
+						else if (ldCell.getSecondLink().equals("8.8.1")) {
+							ldCell.setSecondLink("1.8.1.1");
+							if (rdCell.getFirstLink().equals("6.6.3")) {
+								rdCell.setFirstLink("7.6.3.2");
+							}
+							else if (rdCell.getSecondLink().equals("6.6.3")) {
+								rdCell.setSecondLink("7.6.3.2");
+							}
+						}
+					}
 				}
 				else if (cell instanceof CommentCell) {
+					if (row > 0 && row < scanword.getRows()-1 && column < scanword.getColumns()-1) {
+						Cell sCCell = scanword.getArrayElement(row, column+1);
+						Cell fACell = scanword.getArrayElement(row-1, column+1);
+						Cell sACell = scanword.getArrayElement(row+1, column);
+						int initDirectionIndexForCurrentCell = LinkUtils.transformateDiffCoordinateToDirectionIndex(-1, 1);
+						int initDirectionIndexForSCCell = LinkUtils.transformateDiffCoordinateToDirectionIndex(1, -1);
+						int newDirectionIndexForCurrentCell = LinkUtils.transformateDiffCoordinateToDirectionIndex(1, 0);
+						int newDirectionIndexForSCCell = LinkUtils.transformateDiffCoordinateToDirectionIndex(1, 0);
+						if (LinkUtil.isLinkBetweenTwoCells(cell, initDirectionIndexForCurrentCell, fACell, LinkUtils.oppositeDirectionIndex(initDirectionIndexForCurrentCell))
+								&& LinkUtil.isLinkBetweenTwoCells(sCCell, initDirectionIndexForSCCell, sACell, LinkUtils.oppositeDirectionIndex(initDirectionIndexForSCCell))) {
+							LinkUtil.breakLinkBetweenTwoCells(cell, initDirectionIndexForCurrentCell, fACell, LinkUtils.oppositeDirectionIndex(initDirectionIndexForCurrentCell));
+							LinkUtil.breakLinkBetweenTwoCells(sCCell, initDirectionIndexForSCCell, sACell, LinkUtils.oppositeDirectionIndex(initDirectionIndexForSCCell));
+						}
+						LinkUtil.createLinkBetweenTwoCells(cell, newDirectionIndexForCurrentCell, sACell, LinkUtils.oppositeDirectionIndex(newDirectionIndexForCurrentCell));
+						LinkUtil.createLinkBetweenTwoCells(sCCell, newDirectionIndexForSCCell, fACell, LinkUtils.oppositeDirectionIndex(newDirectionIndexForSCCell));
+					}
 					if (cell.getFirstLink().equals("2.2.3")) {
 						if (scanword.getArrayElement(row, column+1) instanceof CommentCell) {
 							if (!(scanword.getArrayElement(row+1, column) instanceof CommentCell)) {

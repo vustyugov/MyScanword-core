@@ -34,7 +34,7 @@ public final class Util {
 		
 		logger.debug("end execute method firstStepDefineArrows");
 		ArrowUtils.secondStepDefineArrows(scanword.getArray());
-		logger.debug("end execute method secondStepDefineArrows");		
+		logger.debug("end execute method secondStepDefineArrows");
 		for (int index = 1; index < level; index++) {
 			ScanwordUtil.nextStepRedefineArrows(scanword, index, 1);
 			logger.debug("end execute method nextStepRedefineArrow");
@@ -49,6 +49,9 @@ public final class Util {
 		logger.info("end execute method defineArrowsForCommentCells for scanword: name=" + scanword.getName());
 		logger.info("Count cells contains free link: CommentCell="+ScanwordUtil.getCountCellsWithFreeLinks(scanword, CommentCell.class) + 
 						" ActiveCell="+ScanwordUtil.getCountCellsWithFreeLinks(scanword, ActiveCell.class));
+		System.out.println(scanword.getName());
+		System.out.println("Free comment cells="+ScanwordUtil.getCountCellsWithFreeLinks(scanword, CommentCell.class));
+		System.out.println("Free active cells="+ScanwordUtil.getCountCellsWithFreeLinks(scanword, ActiveCell.class));
 		return true;
 	}
 			
