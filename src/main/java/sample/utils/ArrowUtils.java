@@ -487,16 +487,19 @@ public final class ArrowUtils {
 	
 	protected static int getWeight (String link) {
 		logger.debug("start execute method getWeight. input link: " + link);
-		if (link.equals("2.1") || link.equals("2.3") || link.equals("8.1") || link.equals("4.3")) {
+		if (link.equals("2.1") || link.equals("2.3") || link.equals("8.1") || link.equals("4.3")
+				|| link.equals("6.6.1") || link.equals("8.8.3") || link.equals("6.6.3") || link.equals("4.4.1")) {
 			return 4;
 		}
-		else if (link.equals("1.3") || link.equals("5.3") || link.equals("3.1") || link.equals("7.1")) {
+		else if (link.equals("1.3") || link.equals("5.3") || link.equals("3.1") || link.equals("7.1")
+				|| link.equals("1.1.3") || link.equals("5.5.3") || link.equals("3.3.1") || link.equals("7.7.1")) {
 			return 3;
 		}
-		else if (link.equals("6.3") || link.equals("6.1") || link.equals("8.3") || link.equals("4.1")) {
+		else if (link.equals("6.3") || link.equals("6.1") || link.equals("8.3") || link.equals("4.1")
+				|| link.equals("2.2.3") || link.equals("2.2.1") || link.equals("4.4.3") || link.equals("8.8.1")) {
 			return 2;
 		}
-		else if (link.equals("5.1") || link.equals("7.3")) {
+		else if (link.equals("5.1") || link.equals("7.3") || link.equals("1.1.1") || link.equals("3.3.3")) {
 			return 1;
 		}
 		else {

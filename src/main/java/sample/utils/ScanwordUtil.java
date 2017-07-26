@@ -11,7 +11,7 @@ public final class ScanwordUtil {
 	private static final int ACTIVE_CELL_INDEX = 0;
 	private static final int COMMENT_CELL_INDEX = 1;
 	private static Logger logger = Logger.getLogger(ScanwordUtil.class.getName());
-	
+		
 	protected static void changeFilledLinks(Scanword scanword) {
 		logger.debug("start execute method changeFilledLinks");
 		for (int row = 0; row < scanword.getRows(); row ++) {
@@ -54,15 +54,16 @@ public final class ScanwordUtil {
 						Cell sACell = scanword.getArrayElement(row+1, column);
 						int initDirectionIndexForCurrentCell = LinkUtils.transformateDiffCoordinateToDirectionIndex(-1, 1);
 						int initDirectionIndexForSCCell = LinkUtils.transformateDiffCoordinateToDirectionIndex(1, -1);
-						int newDirectionIndexForCurrentCell = LinkUtils.transformateDiffCoordinateToDirectionIndex(1, 0);
+						int newDirectionIndexForCurrentCell = LinkUtils.transformateDiffCoordinateToDirectionIndex(-1, 0);
 						int newDirectionIndexForSCCell = LinkUtils.transformateDiffCoordinateToDirectionIndex(1, 0);
-						if (LinkUtil.isLinkBetweenTwoCells(cell, initDirectionIndexForCurrentCell, fACell, LinkUtils.oppositeDirectionIndex(initDirectionIndexForCurrentCell))
+						if (CellUtils.isType(sCCell, CommentCell.class) && CellUtils.isType(sACell, ActiveCell.class) && CellUtils.isType(fACell, ActiveCell.class)
+								&& LinkUtil.isLinkBetweenTwoCells(cell, initDirectionIndexForCurrentCell, fACell, LinkUtils.oppositeDirectionIndex(initDirectionIndexForCurrentCell))
 								&& LinkUtil.isLinkBetweenTwoCells(sCCell, initDirectionIndexForSCCell, sACell, LinkUtils.oppositeDirectionIndex(initDirectionIndexForSCCell))) {
 							LinkUtil.breakLinkBetweenTwoCells(cell, initDirectionIndexForCurrentCell, fACell, LinkUtils.oppositeDirectionIndex(initDirectionIndexForCurrentCell));
 							LinkUtil.breakLinkBetweenTwoCells(sCCell, initDirectionIndexForSCCell, sACell, LinkUtils.oppositeDirectionIndex(initDirectionIndexForSCCell));
+							LinkUtil.createLinkBetweenTwoCells(cell, newDirectionIndexForCurrentCell, sACell, LinkUtils.oppositeDirectionIndex(newDirectionIndexForCurrentCell));
+							LinkUtil.createLinkBetweenTwoCells(sCCell, newDirectionIndexForSCCell, fACell, LinkUtils.oppositeDirectionIndex(newDirectionIndexForSCCell));
 						}
-						LinkUtil.createLinkBetweenTwoCells(cell, newDirectionIndexForCurrentCell, sACell, LinkUtils.oppositeDirectionIndex(newDirectionIndexForCurrentCell));
-						LinkUtil.createLinkBetweenTwoCells(sCCell, newDirectionIndexForSCCell, fACell, LinkUtils.oppositeDirectionIndex(newDirectionIndexForSCCell));
 					}
 					if (cell.getFirstLink().equals("2.2.3")) {
 						if (scanword.getArrayElement(row, column+1) instanceof CommentCell) {
